@@ -38,7 +38,7 @@
 </div>
 
 <script>
-    // الرابط اللي أنت بعته يا رئيس المنظومة
+    // الرابط الخاص بك (تم التأكيد عليه)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5-VnbykzIdkya25EVwyhdVKYMbovgWkbcYZeWECKT3uhvi9JZ0jPrDtTlaL2XTHtm0A/exec";
 
     function validateShadow() {
@@ -55,6 +55,7 @@
         msgDiv.style.display = "none";
         loader.style.display = "block";
 
+        // إرسال طلب تسجيل الدخول للسكريبت
         fetch(`${SCRIPT_URL}?action=login&id=${id}&pass=${pass}`)
         .then(res => res.json())
         .then(data => {
@@ -64,11 +65,11 @@
                 msgDiv.style.color = "#c5a059";
                 msgDiv.innerText = `أنت ${data.role}.. جاري توجيهك لغرفة العمليات`;
                 
-                // حفظ البيانات مؤقتاً لفتح اللوحة
+                // حفظ بيانات الدخول في المتصفح عشان dashboard.html تعرف إنك مسجل
                 sessionStorage.setItem('shadowUser', JSON.stringify(data));
                 
-                // الانتقال للوحة التحكم بعد ثانيتين
                 setTimeout(() => {
+                    // التوجه لصفحة لوحة الإدارة
                     window.location.href = "dashboard.html";
                 }, 2000);
             } else {
@@ -80,8 +81,16 @@
         .catch(err => {
             loader.style.display = "none";
             alert("حدث خطأ في الاتصال بالسيرفر");
+            console.error(err);
         });
     }
+
+    // السماح بالدخول عند الضغط على زر Enter
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            validateShadow();
+        }
+    });
 </script>
 
 </body>
