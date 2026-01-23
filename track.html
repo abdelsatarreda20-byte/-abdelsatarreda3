@@ -3,56 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متابعة الطلب | مكتب النائب</title>
+    <title>متابعة الطلبات | بوابة المواطن</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 0; text-align: center; }
+        :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
         
-        .header-track { background: var(--primary); color: white; padding: 50px 20px; border-bottom: 5px solid var(--gold); }
-        .track-container { max-width: 500px; margin: -30px auto 40px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        /* الهيدر الجديد */
+        .header-track { 
+            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%); 
+            color: white; padding: 60px 20px; text-align: center;
+            border-bottom: 4px solid var(--gold);
+        }
         
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 10px; font-weight: bold; color: var(--primary); }
-        input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 18px; text-align: center; transition: 0.3s; }
-        input:focus { border-color: var(--gold); outline: none; }
+        .track-container { 
+            max-width: 550px; margin: -40px auto 40px; 
+            background: white; padding: 35px; border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        }
+        
+        input { 
+            width: 100%; padding: 15px; border: 2px solid #e2e8f0; 
+            border-radius: 12px; font-size: 20px; text-align: center; 
+            margin-bottom: 20px; transition: 0.3s; 
+        }
+        input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 10px rgba(197,160,89,0.2); }
 
-        .btn-track { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-track:hover { background: var(--gold); }
+        .btn-track { 
+            background: var(--primary); color: white; border: none; 
+            padding: 16px; width: 100%; border-radius: 12px; 
+            font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; 
+        }
+        .btn-track:hover { background: var(--gold); transform: translateY(-2px); }
 
-        #results { margin-top: 30px; text-align: right; }
-        .req-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border-right: 5px solid var(--gold); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; }
-        .status-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; background: var(--primary); color: white; margin-top: 8px; }
+        /* تصميم المربعات الصفراء (الكروت) */
+        .req-card { 
+            background: #fffef0; /* أصفر خفيف جداً */
+            padding: 20px; border-radius: 15px; 
+            border-right: 6px solid var(--gold); 
+            margin-top: 20px; text-align: right;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .status-badge { 
+            display: inline-block; padding: 6px 15px; 
+            border-radius: 30px; font-size: 14px; font-weight: bold; 
+            background: var(--primary); color: white; margin-top: 10px; 
+        }
         
-        .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        .loader { 
+            display: none; margin: 20px auto; 
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); 
+            border-radius: 50%; width: 35px; height: 35px; 
+            animation: spin 1s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .limit-note { font-size: 12px; color: #888; margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="header-track">
-        <h1><i class="fas fa-search"></i> استعلام عن حالة طلب</h1>
-        <p>ادخل رقمك القومي لمتابعة آخر مستجدات طلبك</p>
+        <h1><i class="fas fa-file-invoice"></i> نظام متابعة الطلبات</h1>
+        <p>الشفافية في خدمتكم.. استعلم عن حالة طلبك الآن</p>
     </div>
 
     <div class="track-container">
-        <div class="input-group">
-            <label>الرقم القومي للمواطن</label>
-            <input type="text" id="citizenId" placeholder="14 رقم" maxlength="14">
-        </div>
-        <button class="btn-track" onclick="trackRequest()">استعلام الآن</button>
+        <label style="display:block; margin-bottom:10px; font-weight:bold; color:var(--primary);">أدخل الرقم القومي الخاص بك</label>
+        <input type="text" id="citizenId" placeholder="14 رقم" maxlength="14">
+        <button class="btn-track" onclick="trackRequest()">بحث عن مستجدات الطلب</button>
         
         <div class="loader" id="loader"></div>
         <div id="results"></div>
         
-        <br>
-        <a href="index.html" style="color: var(--primary); text-decoration: none; font-weight: bold;">العودة للرئيسية</a>
+        <div style="margin-top:25px; border-top:1px solid #eee; padding-top:15px;">
+            <a href="index.html" style="color:var(--primary); text-decoration:none; font-size:14px;">
+                <i class="fas fa-arrow-right"></i> العودة للرئيسية
+            </a>
+        </div>
     </div>
 
 <script>
-    // الرابط الموحد الجديد الخاص بك
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     function trackRequest() {
@@ -61,49 +93,43 @@
         const loader = document.getElementById('loader');
 
         if(id.length !== 14) {
-            alert("يرجى إدخال الرقم القومي المكون من 14 رقم");
+            alert("يرجى إدخال الرقم القومي المكون من 14 رقم بشكل صحيح");
             return;
         }
 
         resDiv.innerHTML = "";
         loader.style.display = "block";
 
-        // جلب كل البيانات بفلترة ذكية
-        fetch(`${SCRIPT_URL}?action=getRequests&t=${new Date().getTime()}`)
+        // استدعاء الأكشن track اللي عملناه في السكريبت
+        fetch(`${SCRIPT_URL}?action=track&id=${id}`)
         .then(res => res.json())
         .then(data => {
             loader.style.display = "none";
             
-            // 1. فلترة الطلبات الخاصة بالمواطن
-            // 2. ترتيبها من الأحدث للأقدم (Data أصلاً معمول لها reverse في السكريبت، فبنأخد أول العناصر)
-            const myRequests = data.filter(row => row[1].toString().trim() === id.trim());
-
-            if(myRequests.length === 0) {
-                resDiv.innerHTML = "<p style='text-align:center; color:red;'>نعتذر، لا يوجد أي طلبات مسجلة بهذا الرقم</p>";
+            if(!data || data.length === 0) {
+                resDiv.innerHTML = "<p style='color:#ef4444; margin-top:20px;'><i class='fas fa-exclamation-triangle'></i> عذراً، لم يتم العثور على طلبات مسجلة لهذا الرقم القومي.</p>";
                 return;
             }
 
-            // عرض أحدث 3 طلبات فقط لضمان سرعة الصفحة ونظافة التصميم
-            resDiv.innerHTML = "<h3 style='color:var(--primary); border-bottom:1px solid #eee; padding-bottom:10px;'>آخر 3 مستجدات لطلباتك:</h3>";
+            resDiv.innerHTML = `<h4 style="color:var(--primary); margin:20px 0 10px;">أحدث ${data.length} طلبات تم العثور عليها:</h4>`;
             
-            myRequests.slice(0, 3).forEach(req => {
+            data.forEach(req => {
+                const dateText = new Date(req.date).toLocaleDateString('ar-EG', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+
                 resDiv.innerHTML += `
                     <div class="req-card">
-                        <div style="font-size: 13px; color: #777;"><i class="far fa-calendar-alt"></i> بتاريخ: ${new Date(req[0]).toLocaleDateString('ar-EG')}</div>
-                        <div style="margin: 10px 0; line-height:1.4;"><strong>موضوع الطلب:</strong> ${req[5]}</div>
-                        <div class="status-tag"><i class="fas fa-info-circle"></i> الحـالة: ${req[9] || 'قيد الدراسة'}</div>
-                        ${req[10] ? `<div style="font-size:11px; color:#aaa; margin-top:5px;">تم التحديث بواسطة: ${req[10]}</div>` : ''}
+                        <div style="font-size: 12px; color: #64748b;"><i class="far fa-clock"></i> ${dateText}</div>
+                        <div style="margin: 12px 0; color:#1e293b; line-height:1.6;"><strong>موضوع الطلب:</strong><br>${req.summary}</div>
+                        <div class="status-badge"><i class="fas fa-check-circle"></i> حالة الطلب: ${req.status}</div>
                     </div>
                 `;
             });
-
-            if(myRequests.length > 3) {
-                resDiv.innerHTML += `<div class="limit-note">* تظهر هنا آخر 3 طلبات فقط من إجمالي ${myRequests.length} طلبات لك.</div>`;
-            }
         })
         .catch(err => {
             loader.style.display = "none";
-            alert("حدث خطأ في الاتصال، تأكد من جودة الإنترنت وحاول ثانية.");
+            alert("حدث خطأ في الاتصال بالخادم، يرجى المحاولة مرة أخرى.");
         });
     }
 </script>
