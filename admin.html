@@ -123,7 +123,7 @@
             loader.style.display = "none";
             if(data.success) {
                 // رسالة نجاح
-                showMsg(`مرحباً سيادة ${data.role}.. جاري فتح التشفير`, "var(--gold)");
+                showMsg(`مرحباً سيادة ${data.role}.. جاري فتح لوحه القيادة`, "var(--gold)");
                 sessionStorage.setItem('shadowUser', JSON.stringify(data));
                 setTimeout(() => { window.location.href = "dashboard.html"; }, 2000);
             } else {
