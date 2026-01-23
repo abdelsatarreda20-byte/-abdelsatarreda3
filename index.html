@@ -1,60 +1,36 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المنصة الإلكترونية لتلقي الطلبات</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --primary-blue: #0f1c4d; --gold: #c5a059; --white: #ffffff; --light-bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--light-bg); margin: 0; }
-        .volunteer-login { position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; text-decoration: none; opacity: 0.6; z-index: 10; }
-        header { background: linear-gradient(rgba(15, 28, 77, 0.92), rgba(15, 28, 77, 0.92)), url('https://images.unsplash.com/photo-1575318634028-6a0cfcb60c59?auto=format&fit=crop&w=1500&q=80'); background-size: cover; padding: 60px 20px 100px; text-align: center; border-bottom: 5px solid var(--gold); color: white; }
-        .deputy-img { width: 250px; height: 250px; border-radius: 50%; border: 5px solid var(--gold); object-fit: cover; }
-        .main-actions { display: flex; justify-content: center; gap: 30px; margin-top: -50px; padding: 0 20px; flex-wrap: wrap; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 280px; text-decoration: none; color: var(--primary-blue); border-top: 5px solid transparent; transition: 0.3s; }
-        .card:hover { transform: translateY(-10px); border-top-color: var(--gold); }
-        .card i { font-size: 40px; color: var(--gold); margin-bottom: 15px; }
-    </style>
-</head>
-<body>
-    <a href="admin.html" class="volunteer-login"><i class="fas fa-lock"></i></a>
-    <header>
-        <img src="https://i.ibb.co/whzHWhZd/6008320486313495499-121.jpg" alt="النائب عبد الستار رضا" class="deputy-img">
-        <h1>المنصة الإلكترونية لتلقي طلبات المواطنين</h1>
-        <div style="font-size: 1.5rem; color: var(--gold);">"بالجمع وللجميع"</div>
-    </header>
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("الورقة1");
+    
+    // حفظ المرفق
+    var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.fileData.split(",")[1]), "image/png", data.fileName);
+    var file = DriveApp.getRootFolder().createFile(fileBlob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    var fileUrl = file.getUrl();
 
-    <section class="main-actions">
-        <a href="apply.html" class="card" id="applyBtn">
-            <i class="fas fa-file-signature"></i>
-            <h3>تقديم طلب جديد</h3>
-            <p>سجل طلبك أو شكواك الآن للمتابعة</p>
-        </a>
-        <a href="track.html" class="card">
-            <i class="fas fa-search-plus"></i>
-            <h3>متابعة طلب سابق</h3>
-            <p>استعلم عن حالة طلبك بالرقم القومي</p>
-        </a>
-    </section>
-
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
-        
-        // كود فحص الإغلاق بدون ما "يهنج" الصفحة
-        window.onload = function() {
-            fetch(`${SCRIPT_URL}?action=checkStatus`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === "closed") {
-                    const btn = document.getElementById('applyBtn');
-                    btn.onclick = function(e) {
-                        e.preventDefault();
-                        alert("عذراً: " + data.msg);
-                    };
-                }
-            }).catch(err => console.log("المنصة تعمل بشكل طبيعي"));
-        };
-    </script>
-</body>
-</html>
+    // إدراج صف في الأعلى
+    sheet.insertRowBefore(2);
+    
+    var rowData = [
+      new Date(),         // A
+      data.nationalID,    // B
+      data.fullIdentity,  // C
+      data.phone,         // D
+      data.address,       // E
+      data.summary,       // F
+      "",                 // G (فراغ)
+      fileUrl,            // H
+      data.suggestion,    // I (هنا المقترح أو الفكرة الجديدة)
+      "قيد المراجعة",     // J
+      ""                  // K (بواسطة)
+    ];
+    
+    sheet.getRange(2, 1, 1, rowData.length).setValues([rowData]);
+    
+    return out(JSON.stringify({status: "success"}));
+  } catch (err) {
+    return out(JSON.stringify({status: "error", message: err.toString()}));
+  }
+}
