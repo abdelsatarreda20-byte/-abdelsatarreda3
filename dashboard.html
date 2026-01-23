@@ -1,117 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غرفة العمليات | رجال الظل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; }
+        
+        /* الهيدر والتحكم */
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197, 160, 89, 0.3); margin-bottom: 25px; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .btn-rest { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-rest.active { background: #22c55e; }
+
+        /* الجدول */
+        .table-container { background: var(--card); border-radius: 15px; overflow-x: auto; border: 1px solid rgba(197, 160, 89, 0.2); }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { background: rgba(197, 160, 89, 0.1); color: var(--gold); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .star { color: #ffcc00; font-size: 18px; margin-right: 5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        
+        .badge { background: var(--gold); color: var(--primary); padding: 4px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-action:hover { background: var(--gold); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="user-info">
+        <div style="width: 50px; height: 50px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-user-tie" style="color: var(--primary); font-size: 24px;"></i>
+        </div>
+        <div>
+            <h3 id="userName" style="margin: 0;">مرحباً يا قائد</h3>
+            <small style="color: #94a3b8;">لوحة تحكم رجال الظل</small>
+        </div>
+    </div>
+    
+    <div style="text-align: left;">
+        <span id="systemStatus" style="margin-left: 15px; font-weight: bold;"></span>
+        <button id="restBtn" onclick="toggleVacation()" class="btn-rest">إدي دماغك إجازة</button>
+        <button onclick="logout()" style="background: transparent; color: #888; border: none; cursor: pointer; margin-right: 10px;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+    </div>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>اسم المواطن</th>
+                <th>الرقم القومي</th>
+                <th>التليفون</th>
+                <th>الطلب</th>
+                <th>المرفق</th>
+                <th>الحالة</th>
+                <th>القرار</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+</div>
+
 <script>
-    // الرابط الجديد اللي أنت بعته
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCkgG9dQrSlWi5icGbt-SciYlnDTFj_POdQMM37PiT39YHZCe4WoLBC-I2p5jizAD9Uw/exec";
-    let allData = [];
-    let currentUser = null;
-    let currentFilter = 'all';
+    // الرابط بتاعك
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5-VnbykzIdkya25EVwyhdVKYMbovgWkbcYZeWECKT3uhvi9JZ0jPrDtTlaL2XTHtm0A/exec";
+    let isClosed = false;
 
+    // التأكد من تسجيل الدخول
     window.onload = function() {
-        currentUser = JSON.parse(sessionStorage.getItem('shadowUser'));
-        if (!currentUser) { window.location.href = "admin.html"; return; }
+        const user = JSON.parse(sessionStorage.getItem('shadowUser'));
+        if(!user) { window.location.href = "admin.html"; return; }
+        document.getElementById('userName').innerText = "مرحباً بك يا " + user.role;
         
-        document.getElementById('uName').innerText = currentUser.name;
-        document.getElementById('uRole').innerText = currentUser.role;
-        
-        if(currentUser.viewActive === "نعم") document.getElementById('radarBox').style.display = 'block';
-        if(currentUser.viewExecutor === "نعم") document.getElementById('executorHead').style.display = 'table-cell';
-
-        syncData(true);
-        // التحديث التلقائي كل 3.5 ثانية (المنطقة الآمنة)
-        setInterval(() => { syncData(false); }, 3500); 
-
-        if(currentUser.viewActive === "نعم") {
-            updateRadar();
-            setInterval(updateRadar, 10000);
-        }
+        checkSystemStatus();
+        loadData();
     };
 
-    function syncData(showLoader = false) {
-        if(showLoader) document.getElementById('loader').style.display = 'flex';
-        fetch(SCRIPT_URL + "?action=getRequests&t=" + new Date().getTime())
+    function checkSystemStatus() {
+        fetch(`${SCRIPT_URL}?action=checkStatus`)
         .then(res => res.json())
         .then(data => {
-            allData = data;
-            renderTable();
-            updateStats(data);
-            if(showLoader) document.getElementById('loader').style.display = 'none';
-        }).catch(err => {
-            console.error("خطأ في المزامنة:", err);
-            if(showLoader) document.getElementById('loader').style.display = 'none';
+            isClosed = (data.status === "closed");
+            const btn = document.getElementById('restBtn');
+            const statusLabel = document.getElementById('systemStatus');
+            btn.innerHTML = isClosed ? '<i class="fas fa-play"></i> العودة للعمل' : '<i class="fas fa-couch"></i> إدي دماغك إجازة';
+            btn.className = isClosed ? "btn-rest active" : "btn-rest";
+            statusLabel.innerText = isClosed ? "المنصة مغلقة" : "المنصة مفتوحة";
         });
     }
 
-    function renderTable() {
-        let displayData = allData;
-        if(currentFilter === 'pending') displayData = allData.filter(r => (r[9] || "قيد المراجعة") === "قيد المراجعة");
-        if(currentFilter === 'done') displayData = allData.filter(r => r[9] !== "قيد المراجعة" && r[9] !== "");
-
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-        
-        displayData.forEach(row => {
-            const tr = document.createElement('tr');
-            
-            // الترتيب البرمجي للأعمدة (يبدأ من 0):
-            // row[0]: التاريخ | row[1]: القومي | row[2]: الاسم | row[5]: اللمحة
-            // row[7]: المرفقات (العمود 8) | row[9]: الحالة (العمود 10) | row[10]: بواسطة (العمود 11)
-
-            const statusText = row[9] || "قيد المراجعة";
-            const isPending = statusText === "قيد المراجعة";
-
-            tr.innerHTML = `
-                <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
-                <td style="font-weight:bold">${row[2]}</td> 
-                <td title="${row[5]}">${row[5].substring(0,25)}...</td>
-                <td>
-                    ${row[7] ? `<a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-file-pdf"></i> فتح</a>` : 'لا يوجد'}
-                </td>
-                <td><span class="status ${isPending ? 'status-pending' : 'status-done'}">${statusText}</span></td>
-                ${currentUser.viewExecutor === "نعم" ? `<td style="color:#94a3b8">${row[10] || '---'}</td>` : ''}
-                <td><button class="btn-action" onclick="takeAction('${row[1]}')">إجراء</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function updateStats(data) {
-        document.getElementById('totalReq').innerText = data.length;
-        document.getElementById('pendingReq').innerText = data.filter(r => (r[9] || "قيد المراجعة") === "قيد المراجعة").length;
-        document.getElementById('doneReq').innerText = data.filter(r => r[9] !== "قيد المراجعة" && r[9] !== "").length;
-    }
-
-    function setFilter(f) {
-        currentFilter = f;
-        renderTable();
-    }
-
-    function takeAction(id) {
-        if(currentUser.canLimit !== "نعم" && currentUser.canGlobal !== "نعم") {
-            alert("⚠️ لا تملك صلاحية تعديل القرار"); return;
-        }
-        const decision = prompt("أدخل حالة الطلب الجديدة (مثلاً: تم الحسم، مرفوض، مستوفى):");
-        if(decision && decision.trim() !== "") {
-            document.getElementById('loader').style.display = 'flex';
-            fetch(`${SCRIPT_URL}?action=updateStatus&id=${id}&status=${decision}&executor=${currentUser.name}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    syncData(true); // تحديث فوري بعد الأكشن
-                } else {
-                    alert("حدث خطأ أثناء التحديث");
-                    document.getElementById('loader').style.display = 'none';
-                }
-            });
+    function toggleVacation() {
+        if(!isClosed) {
+            const msg = prompt("اكتب الرسالة التي ستظهر للمواطنين الآن:", "نعتذر، تم غلق المنصة مؤقتاً لضغط الطلبات.");
+            if(!msg) return;
+            fetch(`${SCRIPT_URL}?action=toggleSystem&status=closed&msg=${encodeURIComponent(msg)}`).then(() => { location.reload(); });
+        } else {
+            if(confirm("هل تريد إعادة فتح المنصة؟")) {
+                fetch(`${SCRIPT_URL}?action=toggleSystem&status=open`).then(() => { location.reload(); });
+            }
         }
     }
 
-    function updateRadar() {
-        fetch(SCRIPT_URL + "?action=getActiveUsers&id=" + currentUser.id + "&t=" + new Date().getTime())
+    function loadData() {
+        fetch(`${SCRIPT_URL}?action=getRequests`)
         .then(res => res.json())
-        .then(users => {
-            const list = document.getElementById('activeUsersList');
-            list.innerText = (users && users.length > 0) ? users.join(' ، ') : "لا يوجد نشاط حالي";
+        .then(data => {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            const seenIDs = new Set();
+            
+            // تحديد المكررين
+            const duplicates = new Set();
+            data.forEach(row => {
+                const id = row[1].toString().trim();
+                if (seenIDs.has(id)) duplicates.add(id);
+                seenIDs.add(id);
+            });
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                const id = row[1].toString().trim();
+                const isDuplicate = duplicates.has(id);
+
+                tr.innerHTML = `
+                    <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
+                    <td style="font-weight:bold">${row[2]} ${isDuplicate ? '<i class="fas fa-star star" title="مواطن مكرر"></i>' : ''}</td>
+                    <td>${id}</td>
+                    <td>${row[3]}</td>
+                    <td>${row[5].substring(0,25)}...</td>
+                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-image"></i> فتح</a></td>
+                    <td><span class="badge">${row[9] || 'قيد المراجعة'}</span></td>
+                    <td><button class="btn-action" onclick="updateStatus('${id}')">تحديث</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
         });
     }
 
-    function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
+    function updateStatus(id) {
+        const newStatus = prompt("أدخل حالة الطلب أو القرار الجديد:");
+        if(newStatus) {
+            fetch(`${SCRIPT_URL}?action=updateStatus&id=${id}&status=${encodeURIComponent(newStatus)}&executor=المكتب الفني`)
+            .then(() => { alert("تم التحديث بنجاح"); loadData(); });
+        }
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        window.location.href = "admin.html";
+    }
 </script>
+
+</body>
+</html>
