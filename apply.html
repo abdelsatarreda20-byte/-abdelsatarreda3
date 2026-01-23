@@ -9,16 +9,16 @@
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
         .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee; }
         .form-group { margin-bottom: 20px; text-align: right; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-submit:disabled { background: #ccc; cursor: wait; }
         #successPage { display: none; text-align: center; padding: 50px 20px; }
         .tracking-code { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed var(--gold); display: inline-block; background: #fff9ed; border-radius: 10px; }
-        .loader { display: none; border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 10px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -33,7 +33,7 @@
         <form id="requestForm">
             <div class="form-group">
                 <label>الاسم رباعي واللقب</label>
-                <input type="text" name="fullIdentity" required placeholder="اكتب الاسم واللقب هنا">
+                <input type="text" name="fullIdentity" required placeholder="مثال: محمد أحمد علي الجبالي">
             </div>
 
             <div class="form-group">
@@ -43,17 +43,12 @@
 
             <div class="form-group">
                 <label>العنوان بالكامل</label>
-                <input type="text" name="address" required placeholder="المركز - القرية">
-            </div>
-
-            <div class="form-group">
-                <label>البريد الإلكتروني (اختياري)</label>
-                <input type="email" name="email" placeholder="example@mail.com">
+                <input type="text" name="address" required placeholder="المركز - القرية - الشارع">
             </div>
 
             <div class="form-group">
                 <label>لمحة عن الطلب</label>
-                <textarea name="summary" rows="4" required placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
+                <textarea name="summary" rows="4" required placeholder="اشرح طلبك باختصار هنا..."></textarea>
             </div>
 
             <div class="form-group">
@@ -61,8 +56,7 @@
                 <textarea name="ideas" rows="2"></textarea>
             </div>
 
-            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب</button>
-            <div class="loader" id="loader"></div>
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب الآن</button>
         </form>
     </div>
 </div>
@@ -70,54 +64,52 @@
 <div id="successPage">
     <div class="form-container">
         <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
-        <h2>تم الإرسال بنجاح</h2>
-        <p>كود المتابعة الخاص بك (يرجى حفظه للاستعلام عن الطلب):</p>
+        <h2 style="color: var(--primary);">تم الإرسال بنجاح</h2>
+        <p>برجاء حفظ كود المتابعة التالي للاستعلام لاحقاً:</p>
         <div class="tracking-code" id="displayCode">---</div>
         <br><br>
-        <a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none;">العودة للرئيسية</a>
+        <a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none; border: 1px solid var(--primary); padding: 10px 20px; border-radius: 8px;">العودة للرئيسية</a>
     </div>
 </div>
 
 <script>
-    // الرابط الأخير الذي أرسلته (AKfycbw2w...)
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2w-4ieBym9IbXvtAhf87Ixsf0slt-zRznD7nEG9RFWsn9fLIBu-9d5-wSsWp6UAb1LA/exec";
+    // الرابط الأخير الذي أرسلته (iww/exec)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mVhZubp0RCzh0z_NI7QtFDZ7kfBNWnxn8fDhuevBg_lDPcgAJUBXo_Fu21Y8Qs7iww/exec";
 
     document.getElementById('requestForm').onsubmit = function(e) {
         e.preventDefault();
         
-        // توليد الكود الذكي
+        // توليد كود المتابعة
         const now = new Date();
         const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
         const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
         const trackingCode = days[now.getDay()] + months[now.getMonth()] + now.getFullYear().toString().slice(-2) + Math.floor(10 + Math.random() * 90);
 
         const btn = document.getElementById('submitBtn');
-        const loader = document.getElementById('loader');
-        
         btn.disabled = true;
-        loader.style.display = 'block';
+        btn.innerText = "جاري الحفظ في السجلات...";
 
         const formData = new FormData(this);
-        formData.append('trackingCode', trackingCode);
+        const params = new URLSearchParams();
+        formData.forEach((value, key) => params.append(key, value));
+        params.append('trackingCode', trackingCode);
 
-        // تحويل FormData إلى URLSearchParams لضمان وصول البيانات بشكل سليم للـ Apps Script
-        const params = new URLSearchParams(formData);
-
+        // الإرسال الفعلي
         fetch(SCRIPT_URL, { 
             method: 'POST', 
-            mode: 'no-cors', // لضمان الإرسال حتى مع وجود قيود المتصفح
+            mode: 'no-cors', 
             body: params 
         })
         .then(() => {
-            // بما أننا نستخدم no-cors، سنفترض النجاح بمجرد اكتمال الطلب
+            // التحويل لصفحة النجاح
             document.getElementById('mainFormPage').style.display = 'none';
             document.getElementById('successPage').style.display = 'block';
             document.getElementById('displayCode').innerText = trackingCode;
         })
         .catch(err => {
-            alert("عذراً، حدث خطأ. تأكد من اتصالك بالإنترنت");
+            alert("حدث خطأ بسيط في الاتصال، لكن قد يكون الطلب قد وصل. يرجى مراجعة المكتب إذا لم تظهر صفحة النجاح.");
             btn.disabled = false;
-            loader.style.display = 'none';
+            btn.innerText = "إرسال الطلب الآن";
         });
     };
 </script>
