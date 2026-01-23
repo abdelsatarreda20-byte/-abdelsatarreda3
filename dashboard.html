@@ -1,56 +1,160 @@
-// دالة المزامنة الشاملة
-function syncData(showLoader = false) {
-    if(showLoader) document.getElementById('globalLoader').style.display = 'flex';
-    
-    // إضافة t= لمنع المتصفح من قراءة البيانات القديمة المخزنة
-    fetch(SCRIPT_URL + "?action=getRequests&t=" + new Date().getTime())
-    .then(res => res.json())
-    .then(data => {
-        allData = data;
-        renderTable(); // إعادة رسم الجدول بالبيانات الجديدة
-        updateStats(data);
-        document.getElementById('last-sync').innerText = "تحديث لحظي: " + new Date().toLocaleTimeString('ar-EG');
-        if(showLoader) document.getElementById('globalLoader').style.display = 'none';
-    });
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غرفة العمليات | رِجَال الظِّل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --shadow-bg: #050a14; --card-bg: #0f172a; --gold: #c5a059; --text: #e2e8f0; --online: #22c55e; }
+        body { background: var(--shadow-bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
+        .top-nav { background: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; }
+        .active-radar { background: rgba(34, 197, 94, 0.1); border: 1px solid var(--online); padding: 15px; border-radius: 12px; margin: 20px 25px; display: none; }
+        .dot { height: 10px; width: 10px; background-color: var(--online); border-radius: 50%; display: inline-block; margin-left: 8px; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 25px 25px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.2); cursor: pointer; }
+        .table-container { padding: 0 25px 50px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 15px; overflow: hidden; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #1e293b; }
+        th { color: var(--gold); }
+        .status { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #332b00; color: #ffcc00; }
+        .status-done { background: #064e3b; color: #34d399; }
+        .btn-action { background: var(--gold); color: #050a14; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    </style>
+</head>
+<body>
 
-// دالة تحديث الرادار + إرسال إشارة "أنا موجود"
-function updateRadar() {
-    // السكريبت هيفهم إنك لسه فاتح الصفحة فيسجلك نشط
-    fetch(SCRIPT_URL + "?action=getActiveUsers&id=" + currentUser.id + "&t=" + new Date().getTime())
-    .then(res => res.json())
-    .then(users => {
-        const list = document.getElementById('activeUsersList');
-        if(users && users.length > 0) {
-            list.innerText = users.join(' ، ');
-        } else {
-            list.innerText = "لا يوجد نشاط خارجي";
+<div id="loader" class="loading-overlay"><i class="fas fa-spinner fa-spin fa-3x" style="color:var(--gold)"></i></div>
+
+<div class="top-nav">
+    <div class="user-profile">
+        <i class="fas fa-user-shield" style="font-size: 24px; color: var(--gold);"></i>
+        <div>
+            <span id="uName" style="display: block; font-weight: bold;">جاري التحميل...</span>
+            <span id="uRole" class="badge" style="background:var(--gold); color:black; padding:2px 8px; border-radius:10px; font-size:12px;">الرتبة</span>
+        </div>
+    </div>
+    <div style="font-weight: bold; color: var(--gold); font-size: 20px;">رِجَال الظِّل</div>
+    <button class="logout-btn" onclick="logout()">خروج</button>
+</div>
+
+<div id="radarBox" class="active-radar">
+    <div style="font-weight: bold; margin-bottom: 8px;"><span class="dot"></span> المتواجدون الآن:</div>
+    <div id="activeUsersList" style="font-size: 14px; color: var(--online);">جاري رصد النشاط...</div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card" onclick="renderTable(allData)"><h3>الكل</h3><p id="totalReq">0</p></div>
+    <div class="stat-card" onclick="filterBy('قيد المراجعة')"><h3>قيد المراجعة</h3><p id="pendingReq">0</p></div>
+    <div class="stat-card" onclick="filterBy('تم الحسم')"><h3>تم الحسم</h3><p id="doneReq">0</p></div>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>المواطن</th>
+                <th>الطلب</th>
+                <th>المرفق</th>
+                <th>الحالة</th>
+                <th id="executorHead" style="display:none;">المنفذ</th>
+                <th>الإجراء</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5-VnbykzIdkya25EVwyhdVKYMbovgWkbcYZeWECKT3uhvi9JZ0jPrDtTlaL2XTHtm0A/exec";
+    let allData = [];
+    let currentUser = null;
+
+    window.onload = function() {
+        currentUser = JSON.parse(sessionStorage.getItem('shadowUser'));
+        if (!currentUser) { window.location.href = "admin.html"; return; }
+        
+        document.getElementById('uName').innerText = currentUser.name;
+        document.getElementById('uRole').innerText = currentUser.role;
+        
+        if(currentUser.viewActive === "نعم") document.getElementById('radarBox').style.display = 'block';
+        if(currentUser.viewExecutor === "نعم") document.getElementById('executorHead').style.display = 'table-cell';
+
+        syncData(true);
+        setInterval(() => { syncData(false); }, 5000); 
+
+        if(currentUser.viewActive === "نعم") {
+            updateRadar();
+            setInterval(updateRadar, 10000);
         }
-    });
-}
+    };
 
-// تشغيل المنظومة عند فتح الصفحة
-window.onload = function() {
-    currentUser = JSON.parse(sessionStorage.getItem('shadowUser'));
-    if (!currentUser) { window.location.href = "admin.html"; return; }
-    
-    document.getElementById('uName').innerText = currentUser.name;
-    document.getElementById('uRole').innerText = currentUser.role;
-    
-    if(currentUser.viewActive === "نعم") document.getElementById('radarBox').style.display = 'block';
-    if(currentUser.viewExecutor === "نعم") document.getElementById('executorHead').style.display = 'table-cell';
-
-    // 1. تحميل البيانات فوراً
-    syncData(true);
-    
-    // 2. تحديث الجدول "إجبارياً" كل 5 ثواني (عشان تشوف شغل زميلك)
-    setInterval(() => {
-        syncData(false); 
-    }, 5000); 
-
-    // 3. تحديث الرادار كل 10 ثواني
-    if(currentUser.viewActive === "نعم") {
-        updateRadar(); // تشغيل فوري
-        setInterval(updateRadar, 10000); 
+    function syncData(showLoader = false) {
+        if(showLoader) document.getElementById('loader').style.display = 'flex';
+        fetch(SCRIPT_URL + "?action=getRequests&t=" + new Date().getTime())
+        .then(res => res.json())
+        .then(data => {
+            allData = data;
+            renderTable(data);
+            updateStats(data);
+            if(showLoader) document.getElementById('loader').style.display = 'none';
+        });
     }
-};
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            const isPending = row[7] === 'قيد المراجعة';
+            tr.innerHTML = `
+                <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
+                <td>${row[2]}</td>
+                <td>${row[5].substring(0,20)}...</td>
+                <td><a href="${row[6]}" target="_blank" style="color:var(--gold)">فتح</a></td>
+                <td><span class="status ${isPending ? 'status-pending' : 'status-done'}">${row[7]}</span></td>
+                ${currentUser.viewExecutor === "نعم" ? `<td>${row[8] || '---'}</td>` : ''}
+                <td><button class="btn-action" onclick="takeAction('${row[1]}')">قرار</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateStats(data) {
+        document.getElementById('totalReq').innerText = data.length;
+        document.getElementById('pendingReq').innerText = data.filter(r => r[7] === "قيد المراجعة").length;
+        document.getElementById('doneReq').innerText = data.filter(r => r[7] !== "قيد المراجعة" && r[7] !== "").length;
+    }
+
+    function updateRadar() {
+        fetch(SCRIPT_URL + "?action=getActiveUsers&id=" + currentUser.id + "&t=" + new Date().getTime())
+        .then(res => res.json())
+        .then(users => {
+            document.getElementById('activeUsersList').innerText = users.join(' ، ');
+        });
+    }
+
+    function takeAction(id) {
+        const decision = prompt("أدخل القرار الجديد:");
+        if(decision) {
+            document.getElementById('loader').style.display = 'flex';
+            fetch(`${SCRIPT_URL}?action=updateStatus&id=${id}&status=${decision}&executor=${currentUser.name}`)
+            .then(() => syncData(true));
+        }
+    }
+
+    function filterBy(status) {
+        if(status === 'قيد المراجعة') renderTable(allData.filter(r => r[7] === "قيد المراجعة"));
+        else renderTable(allData.filter(r => r[7] !== "قيد المراجعة" && r[7] !== ""));
+    }
+
+    function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
+</script>
+
+</body>
+</html>
