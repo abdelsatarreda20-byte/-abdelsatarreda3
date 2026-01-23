@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقديم طلب جديد | مكتب النائب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
+        .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
+        .form-container { max-width: 800px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .optional { font-weight: normal; color: #888; font-size: 0.8rem; margin-right: 5px; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background: var(--gold); }
+        #successPage { display: none; text-align: center; padding: 50px 20px; }
+        .tracking-code { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed var(--gold); display: inline-block; background: #fff9ed; border-radius: 10px; }
+    </style>
+</head>
+<body>
 
+<div id="mainFormPage">
+    <div class="header-apply">
+        <h1>تسجيل طلب / شكوى جديدة</h1>
+        <p>برجاء ملء البيانات التالية بعناية</p>
+    </div>
+
+    <div class="form-container">
+        <form id="requestForm">
+            <div class="form-group">
+                <label>البريد الإلكتروني <span class="optional">(اختياري)</span></label>
+                <input type="email" name="email" id="email">
+            </div>
+
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 2; min-width: 250px;">
+                    <label>الاسم رباعي</label>
+                    <input type="text" name="fullName" id="fullName" required>
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 150px;">
+                    <label>اللقب (العائلة)</label>
+                    <input type="text" name="title" id="title" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>رقم التليفون / واتساب</label>
+                <input type="tel" name="phone" id="phone" required placeholder="01xxxxxxxxx">
+            </div>
+
+            <div class="form-group">
+                <label>العنوان بالكامل</label>
+                <input type="text" name="address" id="address" required>
+            </div>
+
+            <div class="form-group">
+                <label>لمحة عن الطلب</label>
+                <textarea name="summary" id="summary" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>مرفقات (صورة أو ملف PDF)</label>
+                <input type="file" id="attachment" accept="image/*, .pdf" required>
+                <small style="color: #666;">يمكنك رفع صورة المستندات أو ملف PDF الخاص بالطلب</small>
+            </div>
+
+            <div class="form-group">
+                <label>هل لديك أي أفكار أو تعليق؟ <span class="optional">(اختياري)</span></label>
+                <textarea name="ideas" id="ideas" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب وحفظ البيانات</button>
+        </form>
+    </div>
+</div>
+
+<div id="successPage">
+    <div class="form-container">
+        <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
+        <h2 style="color: var(--primary);">تم استلام طلبك بنجاح</h2>
+        <p>برجاء الاحتفاظ بكود المتابعة التالي (هام جداً للاستعلام):</p>
+        <div class="tracking-code" id="displayCode">---</div>
+        <p style="color: #d9534f; font-weight: bold;">ملاحظة: لن تتمكن من متابعة الطلب بدون هذا الكود.</p>
+        <br>
+        <a href="index.html" style="background: var(--primary); color: white; padding: 10px 25px; text-decoration: none; border-radius: 5px;">العودة للرئيسية</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('requestForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        // توليد الكود الذكي
+        const now = new Date();
+        const dayAlpha = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][now.getDay()];
+        const monthAlpha = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][now.getMonth()];
+        const year = now.getFullYear().toString().slice(-2);
+        const random = Math.floor(10 + Math.random() * 90);
+        const trackingCode = `${dayAlpha}${monthAlpha}${year}${random}`;
+
+        // التنبيه قبل العرض
+        const confirmMsg = confirm("سيتم الآن تقديم طلبك. سيظهر لك كود متابعة في الصفحة التالية، يرجى الاحتفاظ به لتتمكن من معرفة الرد على طلبك. هل تود الاستمرار؟");
+        
+        if (confirmMsg) {
+            // هنا سيتم وضع كود الربط الفعلي بـ Google Sheets في الخطوة التالية
+            document.getElementById('mainFormPage').style.display = 'none';
+            document.getElementById('successPage').style.display = 'block';
+            document.getElementById('displayCode').innerText = trackingCode;
+        }
+    };
+</script>
+
+</body>
+</html>
