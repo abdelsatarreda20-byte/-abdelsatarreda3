@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقديم طلب جديد | مكتب النائب عبد الستار رضا</title>
+    <title>تقديم طلب جديد | منصة النائب</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; text-align: right; }
         .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee; }
-        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-container { max-width: 650px; margin: -30px auto 20px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 16px; }
         .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); }
-        .btn-submit:disabled { background: #888; cursor: not-allowed; }
-        #successPage { display: none; text-align: center; padding: 50px 20px; }
-        .tracking-code { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed var(--gold); display: inline-block; background: #fff9ed; border-radius: 10px; }
-        #loader { display: none; color: var(--primary); font-weight: bold; margin-top: 10px; text-align: center; }
+        .btn-submit:hover { background: var(--gold); }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+        #loader { display: none; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; }
+        #successPage { display: none; text-align: center; padding: 40px; }
+        .tracking-code { font-size: 2rem; color: var(--gold); font-weight: bold; padding: 15px; border: 2px dashed var(--gold); display: inline-block; margin: 20px 0; background: #fff9ed; }
     </style>
 </head>
 <body>
@@ -26,58 +26,58 @@
 <div id="mainFormPage">
     <div class="header-apply">
         <h1>تسجيل طلب جديد</h1>
-        <p>مكتب النائب عبد الستار رضا</p>
+        <p>منصة النائب عبد الستار رضا</p>
     </div>
 
     <div class="form-container">
         <form id="requestForm">
             <div class="form-group">
                 <label>الاسم رباعي واللقب</label>
-                <input type="text" id="fullIdentity" required placeholder="اكتب الاسم واللقب">
+                <input type="text" id="fullIdentity" required>
             </div>
             <div class="form-group">
-                <label>رقم التليفون / واتساب</label>
+                <label>رقم التليفون (واتساب)</label>
                 <input type="tel" id="phone" required placeholder="01xxxxxxxxx">
             </div>
             <div class="form-group">
-                <label>العنوان بالكامل</label>
+                <label>العنوان بالتفصيل</label>
                 <input type="text" id="address" required>
             </div>
             <div class="form-group">
-                <label>البريد الإلكتروني (اختياري)</label>
-                <input type="email" id="email">
-            </div>
-            <div class="form-group">
-                <label>لمحة عن الطلب</label>
+                <label>شرح مختصر للطلب</label>
                 <textarea id="summary" rows="4" required></textarea>
             </div>
             <div class="form-group">
-                <label>ارفاق صورة الطلب أو البطاقة (ضروري)</label>
-                <input type="file" id="fileInput" accept="image/*, .pdf" required>
+                <label>البريد الإلكتروني (إن وجد)</label>
+                <input type="email" id="email">
             </div>
             <div class="form-group">
-                <label>أفكار أو تعليقات (اختياري)</label>
+                <label>إرفاق صورة الطلب أو المستندات</label>
+                <input type="file" id="fileInput" accept="image/*,.pdf" required>
+                <small style="color: #666;">يمكنك رفع صورة واحدة أو ملف PDF</small>
+            </div>
+            <div class="form-group">
+                <label>لو عندك أي تعليق أو فكرة جديدة اتفضل</label>
                 <textarea id="ideas" rows="2"></textarea>
             </div>
-            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب والمرفقات</button>
-            <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري رفع الطلب والملفات...</div>
+            
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب الآن</button>
+            <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري رفع طلبك والمرفقات.. برجاء عدم إغلاق الصفحة</div>
         </form>
     </div>
 </div>
 
-<div id="successPage">
-    <div class="form-container">
-        <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
-        <h2>تم الإرسال بنجاح</h2>
-        <p>كود المتابعة الخاص بك:</p>
-        <div class="tracking-code" id="displayCode">---</div>
-        <br><br>
-        <a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none;">العودة للرئيسية</a>
-    </div>
+<div id="successPage" class="form-container">
+    <i class="fas fa-check-circle" style="font-size: 70px; color: #28a745;"></i>
+    <h2>تم استلام طلبك بنجاح</h2>
+    <p>برجاء الاحتفاظ بكود المتابعة التالي لمراجعة حالة الطلب لاحقاً:</p>
+    <div class="tracking-code" id="displayCode"></div>
+    <br><br>
+    <a href="index.html" style="text-decoration: none; color: var(--primary); font-weight: bold;">العودة للصفحة الرئيسية</a>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyexZu76Jq6dMwzpqCt5KUrFgPX7l1v7YMX2grlAg92jTOnFlX2keiONy4rVTF2VDNGeQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6o0uM4z5tMM3kRAdIjPVVWMHSkM-oyEmAJ4X2SHjVUgzGP1or1aolJmzfLDU3CWsGbQ/exec";
 
     document.getElementById('requestForm').onsubmit = function(e) {
         e.preventDefault();
@@ -86,8 +86,8 @@
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
         
-        // توليد كود متابعة
-        const trackingCode = "RE" + Math.floor(100000 + Math.random() * 900000);
+        // توليد كود متابعة مميز
+        const trackingCode = "AS" + Math.floor(100000 + Math.random() * 900000);
 
         btn.disabled = true;
         loader.style.display = "block";
@@ -96,7 +96,7 @@
         reader.readAsDataURL(file);
         reader.onload = function() {
             const payload = {
-                file: reader.result,
+                fileData: reader.result,
                 fileName: file.name,
                 fullIdentity: document.getElementById('fullIdentity').value,
                 phone: document.getElementById('phone').value,
@@ -118,12 +118,13 @@
                 document.getElementById('displayCode').innerText = trackingCode;
             })
             .catch(err => {
-                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
+                alert("حدث خطأ أثناء الإرسال، برجاء المحاولة مرة أخرى.");
                 btn.disabled = false;
                 loader.style.display = "none";
             });
         };
     };
 </script>
+
 </body>
 </html>
