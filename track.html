@@ -3,97 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استعلام عن طلب | مكتب النائب</title>
+    <title>متابعة الطلب | مكتب النائب</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; text-align: right; }
-        .header { background: var(--primary); color: white; padding: 30px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .container { max-width: 500px; margin: 30px auto; padding: 20px; }
-        .search-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
-        input { width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #ddd; border-radius: 10px; font-size: 18px; text-align: center; box-sizing: border-box; }
-        .btn-track { background: var(--primary); color: white; border: none; padding: 15px 30px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-track:hover { background: var(--gold); }
-        #loader { display: none; margin: 20px 0; color: var(--primary); font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 0; text-align: center; }
         
-        /* كارت النتيجة */
-        #result { display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 15px; border-right: 8px solid var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .info-row { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .info-label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px; }
-        .status-badge { display: inline-block; padding: 8px 15px; border-radius: 20px; background: #e8f0fe; color: #1a73e8; font-weight: bold; }
+        .header-track { background: var(--primary); color: white; padding: 50px 20px; border-bottom: 5px solid var(--gold); }
+        .track-container { max-width: 500px; margin: -30px auto 40px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 10px; font-weight: bold; color: var(--primary); }
+        input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 18px; text-align: center; transition: 0.3s; }
+        input:focus { border-color: var(--gold); outline: none; }
+
+        .btn-track { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-track:hover { background: var(--gold); }
+
+        #results { margin-top: 30px; text-align: right; }
+        .req-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border-right: 5px solid var(--gold); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .status-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; background: var(--primary); color: white; margin-top: 8px; }
+        
+        .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1><i class="fas fa-id-card"></i> تتبع حالة طلبك</h1>
-    <p>أدخل الرقم القومي المكون من 14 رقم للاستعلام</p>
-</div>
-
-<div class="container">
-    <div class="search-box">
-        <label style="font-weight: bold; color: var(--primary);">الرقم القومي</label>
-        <input type="text" id="nationalIDInput" maxlength="14" placeholder="290xxxxxxxxxxx">
-        <button class="btn-track" onclick="trackOrderByID()">بحث عن الطلب</button>
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري البحث في السجلات...</div>
+    <div class="header-track">
+        <h1><i class="fas fa-search"></i> استعلام عن حالة طلب</h1>
+        <p>ادخل رقمك القومي لمتابعة آخر مستجدات طلبك</p>
     </div>
 
-    <div id="result">
-        <div class="info-row">
-            <span class="info-label">اسم صاحب الطلب:</span>
-            <span id="resName">-</span>
+    <div class="track-container">
+        <div class="input-group">
+            <label>الرقم القومي للمواطن</label>
+            <input type="text" id="citizenId" placeholder="14 رقم" maxlength="14">
         </div>
-        <div class="info-row">
-            <span class="info-label">حالة الطلب الآن:</span>
-            <span id="resStatus" class="status-badge">قيد المراجعة</span>
-        </div>
-        <p style="font-size: 13px; color: #777;"><i class="fas fa-clock"></i> يتم تحديث الحالة من قبل المكتب الفني للنائب.</p>
+        <button class="btn-track" onclick="trackRequest()">استعلام الآن</button>
+        
+        <div class="loader" id="loader"></div>
+        <div id="results"></div>
+        
+        <br>
+        <a href="index.html" style="color: var(--primary); text-decoration: none; font-weight: bold;">العودة للرئيسية</a>
     </div>
-</div>
 
 <script>
-    // الرابط الأخير بتاعك
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAUbTWRcpEpeTpm3lVQaebdqut7JPRp7bd-DZokFLPN0RwzsRNp6_tjJ4fupbsZFoWgA/exec";
+    // الرابط الثابت الخاص بك
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5-VnbykzIdkya25EVwyhdVKYMbovgWkbcYZeWECKT3uhvi9JZ0jPrDtTlaL2XTHtm0A/exec";
 
-    function trackOrderByID() {
-        const id = document.getElementById('nationalIDInput').value.trim();
-        if(id.length !== 14) { alert("من فضلك أدخل الرقم القومي كاملاً (14 رقم)"); return; }
-
+    function trackRequest() {
+        const id = document.getElementById('citizenId').value;
+        const resDiv = document.getElementById('results');
         const loader = document.getElementById('loader');
-        const result = document.getElementById('result');
-        
-        loader.style.display = "block";
-        result.style.display = "none";
 
-        // طلب GET للبحث بالـ ID
-        fetch(SCRIPT_URL + "?id=" + id)
+        if(id.length !== 14) {
+            alert("يرجى إدخال الرقم القومي المكون من 14 رقم");
+            return;
+        }
+
+        resDiv.innerHTML = "";
+        loader.style.display = "block";
+
+        // طلب جلب البيانات من السكريبت
+        fetch(`${SCRIPT_URL}?action=getRequests&t=${new Date().getTime()}`)
         .then(res => res.json())
         .then(data => {
             loader.style.display = "none";
-            if(data.found) {
-                result.style.display = "block";
-                document.getElementById('resName').innerText = data.name;
-                document.getElementById('resStatus').innerText = data.status;
-                
-                // تلوين الحالة
-                const badge = document.getElementById('resStatus');
-                if(data.status.includes("تم")) {
-                    badge.style.background = "#d4edda";
-                    badge.style.color = "#155724";
-                } else if(data.status.includes("رفض")) {
-                    badge.style.background = "#f8d7da";
-                    badge.style.color = "#721c24";
-                } else {
-                    badge.style.background = "#e8f0fe";
-                    badge.style.color = "#1a73e8";
-                }
-            } else {
-                alert("عذراً، لم يتم العثور على طلب مسجل بهذا الرقم القومي.");
+            // فلترة الطلبات الخاصة بهذا الرقم فقط
+            const myRequests = data.filter(row => row[1].toString().trim() === id.trim());
+
+            if(myRequests.length === 0) {
+                resDiv.innerHTML = "<p style='text-align:center; color:red;'>نعتذر، لا يوجد أي طلبات مسجلة بهذا الرقم</p>";
+                return;
             }
+
+            // عرض أحدث 3 طلبات فقط
+            resDiv.innerHTML = "<h3 style='color:var(--primary)'>آخر الطلبات المقدمة:</h3>";
+            myRequests.slice(0, 3).forEach(req => {
+                resDiv.innerHTML += `
+                    <div class="req-card">
+                        <div style="font-size: 13px; color: #777;">بتاريخ: ${new Date(req[0]).toLocaleDateString('ar-EG')}</div>
+                        <div style="margin: 10px 0;"><strong>موضوع الطلب:</strong> ${req[5]}</div>
+                        <div class="status-tag">${req[9] || 'قيد الدراسة والمراجعة'}</div>
+                    </div>
+                `;
+            });
         })
         .catch(err => {
             loader.style.display = "none";
-            alert("حدث خطأ في الاتصال، حاول مرة أخرى.");
+            alert("حدث خطأ في الاتصال بالخادم، حاول مرة أخرى.");
         });
     }
 </script>
