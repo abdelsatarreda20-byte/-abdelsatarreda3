@@ -16,11 +16,11 @@
         .stat-card p { margin: 5px 0 0; opacity: 0.8; font-size: 13px; font-weight: bold; }
 
         .table-container { background: var(--card); border-radius: 15px; overflow-x: auto; border: 1px solid rgba(197,160,89,0.2); }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         th { background: rgba(197,160,89,0.1); color: var(--gold); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
-        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
         
-        .star { color: #ffcc00; font-size: 16px; margin-right: 5px; animation: flash 1.5s infinite; }
+        .star { color: #ffcc00; font-size: 14px; margin-right: 5px; animation: flash 1.5s infinite; }
         @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
         .btn-rest { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
@@ -31,20 +31,25 @@
         .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
         .status-done { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+        
+        /* ستايل خاص للمقترح */
+        .suggestion-text { display: block; font-size: 11px; color: var(--gold); margin-top: 5px; font-style: italic; }
+        .admin-stamp { font-size: 11px; color: #888; font-family: 'Courier New', monospace; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h3><i class="fas fa-shield-alt"></i> لوحة قيادة مكتب النائب</h3>
-    <div>
+    <h3><i class="fas fa-shield-alt"></i> غرفة عمليات مكاتب النائب | رجال الظل</h3>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <span id="welcomeMsg" style="font-size: 13px; color: var(--gold);"></span>
         <button id="restBtn" onclick="toggleVacation()" class="btn-rest">تحميل الحالة...</button>
-        <button onclick="logout()" style="background:none; color:gray; border:none; cursor:pointer; margin-right:15px;"><i class="fas fa-power-off"></i> خروج</button>
+        <button onclick="logout()" style="background:none; color:gray; border:none; cursor:pointer;"><i class="fas fa-power-off"></i></button>
     </div>
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>طلبات جديدة</p> </div>
+    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>طلبات قيد المراجعة</p> </div>
     <div class="stat-card" style="border-right-color: var(--green);"> <h3 id="doneReq">0</h3> <p>تم التنفيذ</p> </div>
     <div class="stat-card" style="border-right-color: #ffcc00;"> <h3 id="duplicateCount">0</h3> <p>مواطنين مكررين ★</p> </div>
     <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الطلبات</p> </div>
@@ -55,10 +60,10 @@
         <thead>
             <tr>
                 <th>التاريخ</th>
-                <th>الاسم</th>
-                <th>الرقم القومي</th>
-                <th>تفاصيل الطلب</th>
+                <th>المواطن</th>
+                <th>تفاصيل الطلب ومقترحاته</th>
                 <th>المرفق</th>
+                <th>بواسطة</th>
                 <th>الحالة</th>
                 <th>الإجراء</th>
             </tr>
@@ -68,11 +73,15 @@
 </div>
 
 <script>
-    // الرابط الخاص بك
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
+    
+    // سحب بيانات المسؤول من الجلسة
+    const userSession = JSON.parse(sessionStorage.getItem('shadowUser'));
+    const adminName = userSession ? userSession.name : "مسؤول";
 
     window.onload = () => {
-        if(!sessionStorage.getItem('shadowUser')) { window.location.href="admin.html"; return; }
+        if(!userSession) { window.location.href="admin.html"; return; }
+        document.getElementById('welcomeMsg').innerText = "مرحباً: " + adminName;
         checkStatus(); 
         loadData();
     };
@@ -80,14 +89,14 @@
     function checkStatus() {
         fetch(`${SCRIPT_URL}?action=checkStatus`).then(r => r.json()).then(data => {
             const btn = document.getElementById('restBtn');
-            btn.innerText = data.status === "closed" ? "فتح المنصة" : "إدي دماغك إجازة";
+            btn.innerText = data.status === "closed" ? "فتح المنصة" : "إيقاف المنصة مؤقتاً";
             btn.className = data.status === "closed" ? "btn-rest active" : "btn-rest";
         });
     }
 
     function toggleVacation() {
         const btn = document.getElementById('restBtn');
-        const newStatus = btn.innerText.includes("إجازة") ? "closed" : "open";
+        const newStatus = btn.innerText.includes("إيقاف") ? "closed" : "open";
         let msg = newStatus === "closed" ? prompt("رسالة الإغلاق للمواطنين:") : "";
         if(newStatus === "closed" && msg === null) return;
         fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`).then(() => location.reload());
@@ -97,11 +106,9 @@
         fetch(`${SCRIPT_URL}?action=getRequests`).then(r => r.json()).then(data => {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-            
             let done = 0, pending = 0;
             const idCounts = {};
             
-            // حساب التكرارات
             data.forEach(row => { 
                 const id = row[1].toString().trim();
                 idCounts[id] = (idCounts[id] || 0) + 1; 
@@ -112,24 +119,28 @@
 
             data.forEach((row, index) => {
                 const id = row[1].toString().trim();
+                const summary = row[5] || '';
+                const suggestion = row[8] || ''; // العمود I
                 const status = row[9] || 'قيد المراجعة';
-                
-                // حساب رقم الصف الحقيقي في الشيت:
-                // بما إننا بنعرض البيانات زي ما هي جاية (والجديد فوق في الصف رقم 2)
-                // يبقى أول عنصر في المصفوفة (index 0) هو الصف رقم 2 في الشيت
+                const adminStamp = row[10] || '---'; // العمود K
                 const rowIndex = index + 2;
 
-                if(status === "تم التنفيذ") done++;
-                else if(status === "قيد المراجعة") pending++;
-
+                if(status === "تم التنفيذ") done++; else pending++;
                 const statusClass = status === "تم التنفيذ" ? "status-done" : "status-new";
 
                 tbody.innerHTML += `<tr>
-                    <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
-                    <td style="font-weight:bold">${row[2]} ${idCounts[id] > 1 ? '<i class="fas fa-star star" title="مواطن مكرر"></i>' : ''}</td>
-                    <td>${id}</td>
-                    <td>${row[5].substring(0,40)}...</td>
-                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-file-pdf"></i> فتح</a></td>
+                    <td><small>${new Date(row[0]).toLocaleDateString('ar-EG')}</small></td>
+                    <td>
+                        <b>${row[2]}</b><br>
+                        <small style="opacity:0.6">${id}</small>
+                        ${idCounts[id] > 1 ? '<i class="fas fa-star star" title="مواطن مكرر"></i>' : ''}
+                    </td>
+                    <td style="text-align:right; max-width: 300px;">
+                        <div>${summary.substring(0,60)}...</div>
+                        ${suggestion ? `<span class="suggestion-text"><i class="fas fa-lightbulb"></i> مقترح: ${suggestion}</span>` : ''}
+                    </td>
+                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-image"></i></a></td>
+                    <td class="admin-stamp">${adminStamp}</td>
                     <td><span class="status-badge ${statusClass}">${status}</span></td>
                     <td><button class="btn-action" onclick="updateDecision(${rowIndex})">تحديث</button></td>
                 </tr>`;
@@ -143,17 +154,13 @@
     }
 
     function updateDecision(rowIndex) {
-        const p = prompt("تحديث حالة الطلب (مثال: تم التنفيذ، مرفوض، جاري العمل):");
+        const p = prompt("تحديث الحالة (تم التنفيذ / مرفوض / جاري العمل):");
         if(p) {
-            // نبعث rowIndex بدلاً من id لضمان تعديل الصف الصحيح في حالة التكرار
-            fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(p)}`)
+            // نبعث rowIndex واسم المسؤول (adminName)
+            fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(p)}&adminName=${encodeURIComponent(adminName)}`)
             .then(res => res.json())
             .then(data => {
-                if(data.success) {
-                    loadData(); // إعادة تحميل البيانات لتحديث العدادات فوراً
-                } else {
-                    alert("حدث خطأ أثناء التحديث");
-                }
+                if(data.success) { loadData(); }
             });
         }
     }
