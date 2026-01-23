@@ -1,184 +1,56 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>غرفة العمليات | رِجَال الظِّل</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --shadow-bg: #050a14; --card-bg: #0f172a; --gold: #c5a059; --text: #e2e8f0; --online: #22c55e; }
-        body { background: var(--shadow-bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
-        
-        .top-nav { background: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 100; }
-        .user-profile { display: flex; align-items: center; gap: 10px; }
-        .badge { background: var(--gold); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+// دالة المزامنة الشاملة
+function syncData(showLoader = false) {
+    if(showLoader) document.getElementById('globalLoader').style.display = 'flex';
+    
+    // إضافة t= لمنع المتصفح من قراءة البيانات القديمة المخزنة
+    fetch(SCRIPT_URL + "?action=getRequests&t=" + new Date().getTime())
+    .then(res => res.json())
+    .then(data => {
+        allData = data;
+        renderTable(); // إعادة رسم الجدول بالبيانات الجديدة
+        updateStats(data);
+        document.getElementById('last-sync').innerText = "تحديث لحظي: " + new Date().toLocaleTimeString('ar-EG');
+        if(showLoader) document.getElementById('globalLoader').style.display = 'none';
+    });
+}
 
-        .active-radar { background: rgba(34, 197, 94, 0.1); border: 1px solid var(--online); padding: 15px; border-radius: 12px; margin: 20px 25px; display: none; }
-        .dot { height: 10px; width: 10px; background-color: var(--online); border-radius: 50%; display: inline-block; margin-left: 8px; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 25px 25px; }
-        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.2); cursor: pointer; transition: 0.3s; }
-        .stat-card:hover { border-color: var(--gold); transform: translateY(-3px); }
-
-        .table-container { padding: 0 25px 50px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 15px; overflow: hidden; }
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #1e293b; }
-        th { color: var(--gold); background: rgba(197, 160, 89, 0.05); }
-
-        .status { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .status-pending { background: #332b00; color: #ffcc00; }
-        .status-done { background: #064e3b; color: #34d399; }
-        
-        .btn-action { background: var(--gold); color: #050a14; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .logout-btn { background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-<div class="top-nav">
-    <div class="user-profile">
-        <i class="fas fa-user-shield" style="font-size: 24px; color: var(--gold);"></i>
-        <div>
-            <span id="uName" style="display: block; font-weight: bold;">جاري التحميل...</span>
-            <span id="uRole" class="badge">الرتبة</span>
-        </div>
-    </div>
-    <div style="font-weight: bold; color: var(--gold); font-size: 20px;">رِجَال الظِّل</div>
-    <button class="logout-btn" onclick="logout()">خروج</button>
-</div>
-
-<div id="radarBox" class="active-radar">
-    <div style="font-weight: bold; margin-bottom: 8px;"><span class="dot"></span> المتواجدون الآن على المنصة:</div>
-    <div id="activeUsersList" style="font-size: 14px; color: var(--online);"></div>
-</div>
-
-<div class="stats-grid">
-    <div class="stat-card" onclick="renderTable(allData)"><i class="fas fa-list"></i><h3 id="totalReq">0</h3><p>كل الطلبات</p></div>
-    <div class="stat-card" onclick="filterBy('قيد المراجعة')"><i class="fas fa-clock"></i><h3 id="pendingReq">0</h3><p>قيد المراجعة</p></div>
-    <div class="stat-card" onclick="filterBy('تم الحسم')"><i class="fas fa-check-double"></i><h3 id="doneReq">0</h3><p>تم الحسم (المنجزة)</p></div>
-</div>
-
-<div class="table-container">
-    <table id="mainTable">
-        <thead>
-            <tr>
-                <th>التاريخ</th>
-                <th>المواطن</th>
-                <th>الطلب</th>
-                <th>المرفق</th>
-                <th>الحالة</th>
-                <th id="executorHead" style="display:none;">المنفذ</th>
-                <th>الإجراء</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-    </table>
-</div>
-
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5-VnbykzIdkya25EVwyhdVKYMbovgWkbcYZeWECKT3uhvi9JZ0jPrDtTlaL2XTHtm0A/exec";
-    let allData = [];
-    let currentUser = null;
-
-    window.onload = function() {
-        currentUser = JSON.parse(sessionStorage.getItem('shadowUser'));
-        if (!currentUser) { window.location.href = "admin.html"; return; }
-        
-        document.getElementById('uName').innerText = currentUser.name;
-        document.getElementById('uRole').innerText = currentUser.role;
-        
-        if(currentUser.viewActive === "نعم") {
-            document.getElementById('radarBox').style.display = 'block';
-            updateRadar();
-            setInterval(updateRadar, 20000); 
-        }
-
-        if(currentUser.viewExecutor === "نعم") {
-            document.getElementById('executorHead').style.display = 'table-cell';
-        }
-
-        loadData();
-    };
-
-    function loadData() {
-        fetch(SCRIPT_URL + "?action=getRequests")
-        .then(res => res.json())
-        .then(data => {
-            allData = data;
-            renderTable(data);
-            updateStats(data);
-        });
-    }
-
-    function renderTable(data) {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-        data.forEach(row => {
-            const tr = document.createElement('tr');
-            // أي حالة غير "قيد المراجعة" تأخذ لون الإنجاز الأخضر
-            const isPending = row[7] === 'قيد المراجعة';
-            const statusClass = isPending ? 'status-pending' : 'status-done';
-            
-            tr.innerHTML = `
-                <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
-                <td>${row[2]}</td>
-                <td title="${row[5]}">${row[5].substring(0,25)}...</td>
-                <td><a href="${row[6]}" target="_blank" style="color:var(--gold); text-decoration:none;"><i class="fas fa-paperclip"></i></a></td>
-                <td><span class="status ${statusClass}">${row[7]}</span></td>
-                ${currentUser.viewExecutor === "نعم" ? `<td>${row[8] || '---'}</td>` : ''}
-                <td><button class="btn-action" onclick="takeAction('${row[1]}')">تعديل</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function updateStats(data) {
-        document.getElementById('totalReq').innerText = data.length;
-        // قيد المراجعة: فقط الطلبات المكتوب فيها "قيد المراجعة"
-        const pendingCount = data.filter(r => r[7] === "قيد المراجعة").length;
-        // تم الحسم: أي طلب حالته ليست "قيد المراجعة" وليست فارغة
-        const doneCount = data.filter(r => r[7] !== "قيد المراجعة" && r[7] !== "").length;
-        
-        document.getElementById('pendingReq').innerText = pendingCount;
-        document.getElementById('doneReq').innerText = doneCount;
-    }
-
-    function filterBy(statusType) {
-        if (statusType === 'قيد المراجعة') {
-            renderTable(allData.filter(r => r[7] === "قيد المراجعة"));
+// دالة تحديث الرادار + إرسال إشارة "أنا موجود"
+function updateRadar() {
+    // السكريبت هيفهم إنك لسه فاتح الصفحة فيسجلك نشط
+    fetch(SCRIPT_URL + "?action=getActiveUsers&id=" + currentUser.id + "&t=" + new Date().getTime())
+    .then(res => res.json())
+    .then(users => {
+        const list = document.getElementById('activeUsersList');
+        if(users && users.length > 0) {
+            list.innerText = users.join(' ، ');
         } else {
-            // فلتر "تم الحسم" يعرض كل ما هو ليس "قيد المراجعة"
-            renderTable(allData.filter(r => r[7] !== "قيد المراجعة" && r[7] !== ""));
+            list.innerText = "لا يوجد نشاط خارجي";
         }
-    }
+    });
+}
 
-    function updateRadar() {
-        fetch(SCRIPT_URL + "?action=getActiveUsers")
-        .then(res => res.json())
-        .then(users => {
-            document.getElementById('activeUsersList').innerText = users.join(' ، ');
-        });
-    }
+// تشغيل المنظومة عند فتح الصفحة
+window.onload = function() {
+    currentUser = JSON.parse(sessionStorage.getItem('shadowUser'));
+    if (!currentUser) { window.location.href = "admin.html"; return; }
+    
+    document.getElementById('uName').innerText = currentUser.name;
+    document.getElementById('uRole').innerText = currentUser.role;
+    
+    if(currentUser.viewActive === "نعم") document.getElementById('radarBox').style.display = 'block';
+    if(currentUser.viewExecutor === "نعم") document.getElementById('executorHead').style.display = 'table-cell';
 
-    function takeAction(id) {
-        if(currentUser.canLimit !== "نعم" && currentUser.canGlobal !== "نعم") {
-            alert("ليس لديك صلاحية اتخاذ قرار."); return;
-        }
-        const decision = prompt("أدخل حالة الطلب الجديدة أو القرار (مثال: تم الحسم، مرفوض، تم القبول):");
-        if(decision) {
-            fetch(`${SCRIPT_URL}?action=updateStatus&id=${id}&status=${decision}&executor=${currentUser.name}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    alert("تم تحديث الطلب بنجاح");
-                    loadData();
-                }
-            });
-        }
-    }
+    // 1. تحميل البيانات فوراً
+    syncData(true);
+    
+    // 2. تحديث الجدول "إجبارياً" كل 5 ثواني (عشان تشوف شغل زميلك)
+    setInterval(() => {
+        syncData(false); 
+    }, 5000); 
 
-    function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
-</script>
-</body>
-</html>
+    // 3. تحديث الرادار كل 10 ثواني
+    if(currentUser.viewActive === "نعم") {
+        updateRadar(); // تشغيل فوري
+        setInterval(updateRadar, 10000); 
+    }
+};
