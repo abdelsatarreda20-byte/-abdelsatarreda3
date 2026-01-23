@@ -3,64 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة رجال الظل | دخول</title>
+    <title>بوابة رجال الظل | الدخول الآمن</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: white; }
-        .login-card { background: #0f172a; padding: 40px; border-radius: 20px; width: 350px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .icon-circle { width: 80px; height: 80px; background: rgba(197, 160, 89, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 2px solid var(--gold); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #1e293b; background: #1e293b; color: white; text-align: center; font-size: 16px; box-sizing: border-box; }
-        .btn-login { background: var(--gold); color: #0b1c4d; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 18px; margin-top: 10px; transition: 0.3s; }
-        #msg { margin-top: 20px; font-weight: bold; display: none; }
-        .loader { display: none; margin: 10px auto; border: 3px solid #f3f3f3; border-top: 3px solid var(--gold); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        :root { --primary: #0b1c4d; --gold: #d4af37; --bg: #020617; --card: #0f172a; }
+        body { 
+            background: radial-gradient(circle at center, #1e293b 0%, var(--bg) 100%); 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; color: white; overflow: hidden;
+        }
+        
+        /* تصميم الكارت الفخم */
+        .login-card { 
+            background: var(--card); 
+            padding: 50px 40px; 
+            border-radius: 25px; 
+            width: 380px; 
+            text-align: center; 
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.1);
+            position: relative;
+        }
+        
+        /* أيقونة رجال الظل المتوهجة */
+        .icon-circle { 
+            width: 90px; height: 90px; 
+            background: rgba(212, 175, 55, 0.05); 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            margin: 0 auto 30px; 
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 15px var(--gold);
+        }
+
+        h2 { color: var(--gold); letter-spacing: 2px; margin-bottom: 5px; font-weight: 900; }
+        .subtitle { color: #94a3b8; font-size: 13px; margin-bottom: 30px; letter-spacing: 1px; }
+
+        input { 
+            width: 100%; padding: 14px; margin: 12px 0; 
+            border-radius: 10px; border: 1px solid #334155; 
+            background: #1e293b; color: white; 
+            text-align: center; font-size: 16px; 
+            box-sizing: border-box; outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+
+        .btn-login { 
+            background: linear-gradient(45deg, #b8860b, var(--gold)); 
+            color: #020617; border: none; padding: 16px; 
+            width: 100%; border-radius: 10px; cursor: pointer; 
+            font-weight: 900; font-size: 18px; margin-top: 15px; 
+            transition: 0.4s; text-transform: uppercase;
+        }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); }
+
+        #msg { margin-top: 25px; font-size: 14px; min-height: 20px; }
+        
+        /* الأنميشن الخاص بالتحميل */
+        .loader { 
+            display: none; margin: 15px auto; 
+            border: 3px solid #1e293b; border-top: 3px solid var(--gold); 
+            border-radius: 50%; width: 25px; height: 25px; 
+            animation: spin 1s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="login-card">
-    <div class="icon-circle"><i class="fas fa-user-secret" style="font-size: 40px; color: var(--gold);"></i></div>
-    <h2>مرحبًا بك</h2>
-    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">ادخل بيانات الهوية للوصول</p>
-    <input type="text" id="nationalID" placeholder="الرقم القومي" maxlength="14">
-    <input type="password" id="passCode" placeholder="كلمة المرور">
-    <button class="btn-login" onclick="validateShadow()">دخول النظام</button>
+    <div class="icon-circle">
+        <i class="fas fa-user-secret" style="font-size: 45px; color: var(--gold);"></i>
+    </div>
+    <h2>رِجال الظِل</h2>
+    <p class="subtitle">نظام إدارة العمليات المركزي</p>
+    
+    <input type="text" id="nationalID" placeholder="رقم الهوية" maxlength="14">
+    <input type="password" id="passCode" placeholder="كود الوصول">
+    
+    <button class="btn-login" id="loginBtn" onclick="validateShadow()">تأكيد الهوية</button>
+    
     <div class="loader" id="loader"></div>
     <div id="msg"></div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
+    // تأكد من وضع رابط السكريبت الجديد هنا
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     function validateShadow() {
         const id = document.getElementById('nationalID').value;
         const pass = document.getElementById('passCode').value;
         const msgDiv = document.getElementById('msg');
         const loader = document.getElementById('loader');
+        const btn = document.getElementById('loginBtn');
 
-        msgDiv.style.display = "none";
+        if(!id || !pass) {
+            showMsg("يرجى إدخال كافة البيانات", "#ef4444");
+            return;
+        }
+
+        btn.style.display = "none";
         loader.style.display = "block";
+        msgDiv.innerText = "";
 
         fetch(`${SCRIPT_URL}?action=login&id=${id}&pass=${pass}`)
         .then(res => res.json())
         .then(data => {
             loader.style.display = "none";
             if(data.success) {
-                msgDiv.style.display = "block";
-                msgDiv.style.color = "#c5a059";
-                msgDiv.innerText = `أنت ${data.role}.. جاري توجيهك لغرفة العمليات`;
+                showMsg(`مرحباً سيادة ${data.role}.. جاري فتح التشفير`, "#d4af37");
+                // حفظ البيانات شاملة الاسم الصحيح للمسؤول
                 sessionStorage.setItem('shadowUser', JSON.stringify(data));
+                
+                // التوجيه للداشبورد بعد ثانيتين
                 setTimeout(() => { window.location.href = "dashboard.html"; }, 2000);
             } else {
-                msgDiv.style.display = "block";
-                msgDiv.style.color = "#ef4444";
-                msgDiv.innerText = "عذراً.. بيانات الدخول غير صحيحة";
+                btn.style.display = "block";
+                showMsg("عذراً.. الهوية غير معتمدة في النظام", "#ef4444");
             }
         }).catch(err => {
             loader.style.display = "none";
-            alert("خطأ في الاتصال بالسيرفر");
+            btn.style.display = "block";
+            showMsg("خطأ في تشفير البيانات المارقة", "#ef4444");
         });
+    }
+
+    function showMsg(text, color) {
+        const msgDiv = document.getElementById('msg');
+        msgDiv.style.display = "block";
+        msgDiv.style.color = color;
+        msgDiv.innerText = text;
     }
 </script>
 </body>
