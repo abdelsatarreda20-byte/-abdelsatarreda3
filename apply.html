@@ -9,23 +9,23 @@
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
         .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 20px; text-align: right; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-submit:disabled { background: #ccc; cursor: wait; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); }
+        .btn-submit:disabled { background: #888; cursor: not-allowed; }
         #successPage { display: none; text-align: center; padding: 50px 20px; }
         .tracking-code { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed var(--gold); display: inline-block; background: #fff9ed; border-radius: 10px; }
+        #loading { display: none; color: var(--primary); font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="mainFormPage">
     <div class="header-apply">
-        <h1>تسجيل طلب جديد</h1>
+        <h1>تسجيل طلب جديد بالمرفقات</h1>
         <p>مكتب النائب عبد الستار رضا</p>
     </div>
 
@@ -33,30 +33,36 @@
         <form id="requestForm">
             <div class="form-group">
                 <label>الاسم رباعي واللقب</label>
-                <input type="text" name="fullIdentity" required placeholder="مثال: محمد أحمد علي الجبالي">
+                <input type="text" id="fullIdentity" required placeholder="اكتب الاسم واللقب هنا">
             </div>
 
             <div class="form-group">
                 <label>رقم التليفون / واتساب</label>
-                <input type="tel" name="phone" required placeholder="01xxxxxxxxx">
+                <input type="tel" id="phone" required placeholder="01xxxxxxxxx">
             </div>
 
             <div class="form-group">
                 <label>العنوان بالكامل</label>
-                <input type="text" name="address" required placeholder="المركز - القرية - الشارع">
+                <input type="text" id="address" required>
             </div>
 
             <div class="form-group">
                 <label>لمحة عن الطلب</label>
-                <textarea name="summary" rows="4" required placeholder="اشرح طلبك باختصار هنا..."></textarea>
+                <textarea id="summary" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>ارفاق صورة الطلب أو البطاقة (ضروري)</label>
+                <input type="file" id="fileInput" accept="image/*, .pdf" required>
             </div>
 
             <div class="form-group">
                 <label>أفكار أو تعليقات (اختياري)</label>
-                <textarea name="ideas" rows="2"></textarea>
+                <textarea id="ideas" rows="2"></textarea>
             </div>
 
-            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب الآن</button>
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب والمرفقات</button>
+            <div id="loading">جاري رفع الملفات.. برجاء الانتظار وعدم غلق الصفحة...</div>
         </form>
     </div>
 </div>
@@ -64,53 +70,62 @@
 <div id="successPage">
     <div class="form-container">
         <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
-        <h2 style="color: var(--primary);">تم الإرسال بنجاح</h2>
-        <p>برجاء حفظ كود المتابعة التالي للاستعلام لاحقاً:</p>
+        <h2>تم الإرسال بنجاح</h2>
+        <p>كود المتابعة الخاص بك:</p>
         <div class="tracking-code" id="displayCode">---</div>
         <br><br>
-        <a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none; border: 1px solid var(--primary); padding: 10px 20px; border-radius: 8px;">العودة للرئيسية</a>
+        <a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none;">العودة للرئيسية</a>
     </div>
 </div>
 
 <script>
-    // الرابط الأخير الذي أرسلته (iww/exec)
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0mVhZubp0RCzh0z_NI7QtFDZ7kfBNWnxn8fDhuevBg_lDPcgAJUBXo_Fu21Y8Qs7iww/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4ee1oOh7O-LN4EhWEB9-IbHmU4AKhxxoJq0SY0kWWpMqEAmlzV-ApOTVv2tqPpf-wyg/exec";
 
     document.getElementById('requestForm').onsubmit = function(e) {
         e.preventDefault();
         
-        // توليد كود المتابعة
-        const now = new Date();
-        const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-        const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
-        const trackingCode = days[now.getDay()] + months[now.getMonth()] + now.getFullYear().toString().slice(-2) + Math.floor(10 + Math.random() * 90);
-
         const btn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        
+        // كود متابعة ذكي
+        const now = new Date();
+        const trackingCode = "R" + now.getTime().toString().slice(-6);
+
         btn.disabled = true;
-        btn.innerText = "جاري الحفظ في السجلات...";
+        loading.style.display = "block";
 
-        const formData = new FormData(this);
-        const params = new URLSearchParams();
-        formData.forEach((value, key) => params.append(key, value));
-        params.append('trackingCode', trackingCode);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+            const payload = {
+                file: reader.result,
+                fileName: file.name,
+                fullIdentity: document.getElementById('fullIdentity').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                summary: document.getElementById('summary').value,
+                ideas: document.getElementById('ideas').value,
+                trackingCode: trackingCode
+            };
 
-        // الإرسال الفعلي
-        fetch(SCRIPT_URL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: params 
-        })
-        .then(() => {
-            // التحويل لصفحة النجاح
-            document.getElementById('mainFormPage').style.display = 'none';
-            document.getElementById('successPage').style.display = 'block';
-            document.getElementById('displayCode').innerText = trackingCode;
-        })
-        .catch(err => {
-            alert("حدث خطأ بسيط في الاتصال، لكن قد يكون الطلب قد وصل. يرجى مراجعة المكتب إذا لم تظهر صفحة النجاح.");
-            btn.disabled = false;
-            btn.innerText = "إرسال الطلب الآن";
-        });
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('mainFormPage').style.display = 'none';
+                document.getElementById('successPage').style.display = 'block';
+                document.getElementById('displayCode').innerText = trackingCode;
+            })
+            .catch(err => {
+                alert("حدث خطأ في الرفع، تأكد من حجم الملف وحاول مرة أخرى");
+                btn.disabled = false;
+                loading.style.display = "none";
+            });
+        };
     };
 </script>
 
