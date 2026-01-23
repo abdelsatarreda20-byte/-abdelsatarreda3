@@ -10,9 +10,8 @@
         
         .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; }
         
-        /* كروت الإحصائيات الذكية */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: var(--card); padding: 20px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .stat-card h3 { margin: 0; color: var(--gold); font-size: 32px; }
         .stat-card p { margin: 5px 0 0; opacity: 0.8; font-size: 13px; font-weight: bold; }
 
@@ -21,7 +20,6 @@
         th { background: rgba(197,160,89,0.1); color: var(--gold); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
         td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        /* النجمة الذكية */
         .star { color: #ffcc00; font-size: 16px; margin-right: 5px; animation: flash 1.5s infinite; }
         @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
@@ -30,7 +28,6 @@
         .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 5px 12px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
         .btn-action:hover { background: var(--gold); color: white; }
         
-        /* ألوان الحالات */
         .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
         .status-done { background: rgba(34, 197, 94, 0.2); color: var(--green); }
@@ -71,6 +68,7 @@
 </div>
 
 <script>
+    // الرابط الخاص بك
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     window.onload = () => {
@@ -91,6 +89,7 @@
         const btn = document.getElementById('restBtn');
         const newStatus = btn.innerText.includes("إجازة") ? "closed" : "open";
         let msg = newStatus === "closed" ? prompt("رسالة الإغلاق للمواطنين:") : "";
+        if(newStatus === "closed" && msg === null) return;
         fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`).then(() => location.reload());
     }
 
@@ -101,6 +100,8 @@
             
             let done = 0, pending = 0;
             const idCounts = {};
+            
+            // حساب التكرارات
             data.forEach(row => { 
                 const id = row[1].toString().trim();
                 idCounts[id] = (idCounts[id] || 0) + 1; 
@@ -109,10 +110,15 @@
             let duplicates = 0;
             Object.values(idCounts).forEach(v => { if(v > 1) duplicates++; });
 
-            data.forEach(row => {
+            data.forEach((row, index) => {
                 const id = row[1].toString().trim();
                 const status = row[9] || 'قيد المراجعة';
                 
+                // حساب رقم الصف الحقيقي في الشيت:
+                // بما إننا بنعرض البيانات زي ما هي جاية (والجديد فوق في الصف رقم 2)
+                // يبقى أول عنصر في المصفوفة (index 0) هو الصف رقم 2 في الشيت
+                const rowIndex = index + 2;
+
                 if(status === "تم التنفيذ") done++;
                 else if(status === "قيد المراجعة") pending++;
 
@@ -120,12 +126,12 @@
 
                 tbody.innerHTML += `<tr>
                     <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
-                    <td style="font-weight:bold">${row[2]} ${idCounts[id] > 1 ? '<i class="fas fa-star star"></i>' : ''}</td>
+                    <td style="font-weight:bold">${row[2]} ${idCounts[id] > 1 ? '<i class="fas fa-star star" title="مواطن مكرر"></i>' : ''}</td>
                     <td>${id}</td>
-                    <td>${row[5].substring(0,30)}...</td>
-                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)">فتح</a></td>
+                    <td>${row[5].substring(0,40)}...</td>
+                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-file-pdf"></i> فتح</a></td>
                     <td><span class="status-badge ${statusClass}">${status}</span></td>
-                    <td><button class="btn-action" onclick="updateDecision('${id}')">تحديث</button></td>
+                    <td><button class="btn-action" onclick="updateDecision(${rowIndex})">تحديث</button></td>
                 </tr>`;
             });
             
@@ -136,11 +142,19 @@
         });
     }
 
-    function updateDecision(id) {
-        const p = prompt("تحديث حالة الطلب (اكتب 'تم التنفيذ' لنقله لعداد المكتمل):");
+    function updateDecision(rowIndex) {
+        const p = prompt("تحديث حالة الطلب (مثال: تم التنفيذ، مرفوض، جاري العمل):");
         if(p) {
-            fetch(`${SCRIPT_URL}?action=updateStatus&id=${id}&status=${encodeURIComponent(p)}`)
-            .then(() => loadData()); // يعيد التحميل فوراً لتحديث العدادات
+            // نبعث rowIndex بدلاً من id لضمان تعديل الصف الصحيح في حالة التكرار
+            fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(p)}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    loadData(); // إعادة تحميل البيانات لتحديث العدادات فوراً
+                } else {
+                    alert("حدث خطأ أثناء التحديث");
+                }
+            });
         }
     }
 
