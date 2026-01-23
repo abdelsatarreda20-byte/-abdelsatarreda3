@@ -14,7 +14,6 @@
             height: 100vh; margin: 0; color: white; overflow: hidden;
         }
         
-        /* تصميم الكارت الفخم */
         .login-card { 
             background: var(--card); 
             padding: 50px 40px; 
@@ -26,7 +25,6 @@
             position: relative;
         }
         
-        /* أيقونة رجال الظل المتوهجة */
         .icon-circle { 
             width: 90px; height: 90px; 
             background: rgba(212, 175, 55, 0.05); 
@@ -59,9 +57,16 @@
         }
         .btn-login:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); }
 
-        #msg { margin-top: 25px; font-size: 14px; min-height: 20px; }
+        /* تعديل ستايل الرسالة لتكون واضحة وذهبية */
+        #msg { 
+            margin-top: 25px; 
+            font-size: 16px; 
+            font-weight: bold;
+            min-height: 24px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+        }
         
-        /* الأنميشن الخاص بالتحميل */
         .loader { 
             display: none; margin: 15px auto; 
             border: 3px solid #1e293b; border-top: 3px solid var(--gold); 
@@ -90,12 +95,12 @@
 </div>
 
 <script>
-    // تأكد من وضع رابط السكريبت الجديد هنا
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     function validateShadow() {
-        const id = document.getElementById('nationalID').value;
-        const pass = document.getElementById('passCode').value;
+        // .trim() بتمسح أي مسافات فاضية دخلت في النص غصب عنك
+        const id = document.getElementById('nationalID').value.trim();
+        const pass = document.getElementById('passCode').value.trim();
         const msgDiv = document.getElementById('msg');
         const loader = document.getElementById('loader');
         const btn = document.getElementById('loginBtn');
@@ -109,20 +114,22 @@
         loader.style.display = "block";
         msgDiv.innerText = "";
 
-        fetch(`${SCRIPT_URL}?action=login&id=${id}&pass=${pass}`)
+        // تشفير الرابط لضمان وصول id و pass للسكريبت بدون أخطاء
+        const url = `${SCRIPT_URL}?action=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`;
+
+        fetch(url)
         .then(res => res.json())
         .then(data => {
             loader.style.display = "none";
             if(data.success) {
-                showMsg(`مرحباً سيادة ${data.role}.. جاري فتح التشفير`, "#d4af37");
-                // حفظ البيانات شاملة الاسم الصحيح للمسؤول
+                // رسالة نجاح
+                showMsg(`مرحباً سيادة ${data.role}.. جاري فتح التشفير`, "var(--gold)");
                 sessionStorage.setItem('shadowUser', JSON.stringify(data));
-                
-                // التوجيه للداشبورد بعد ثانيتين
                 setTimeout(() => { window.location.href = "dashboard.html"; }, 2000);
             } else {
                 btn.style.display = "block";
-                showMsg("عذراً.. لست من رجال الظل", "#ef4444");
+                // رسالة الخطأ الذهبية الواضحة اللي طلبتها
+                showMsg("عذراً.. أنت لست من رجال الظل", "var(--gold)");
             }
         }).catch(err => {
             loader.style.display = "none";
