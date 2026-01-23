@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقديم طلب جديد | منصة النائب</title>
+    <title>تقديم طلب جديد | مكتب النائب</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 0; text-align: right; }
         .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .form-container { max-width: 600px; margin: -30px auto 40px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; }
+        .form-container { max-width: 600px; margin: -30px auto 40px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
         .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-submit:hover { background: var(--gold); }
         #loader { display: none; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; }
-        
-        /* قسم النجاح - مخفي في البداية */
         #successSection { display: none; text-align: center; padding: 40px 20px; }
-        .tracking-box { background: #fff9ed; border: 2px dashed var(--gold); border-radius: 15px; padding: 20px; display: inline-block; margin: 20px 0; }
-        .tracking-code { font-size: 2.5rem; color: var(--primary); font-weight: bold; }
+        .national-id-highlight { background: #fdfae6; border: 1px solid #f1e0a2; }
     </style>
 </head>
 <body>
@@ -30,35 +28,41 @@
         <h1><i class="fas fa-file-signature"></i> تسجيل طلب جديد</h1>
         <p>مكتب النائب عبد الستار رضا</p>
     </div>
+
     <div class="form-container">
-        <form id="requestForm">
+        <form id="applyForm">
             <div class="form-group">
-                <label>الاسم رباعي واللقب</label>
-                <input type="text" id="fullIdentity" required placeholder="أدخل اسمك الكامل">
+                <label><i class="fas fa-user"></i> الاسم رباعي</label>
+                <input type="text" id="name" required placeholder="أدخل اسمك كما هو في البطاقة">
             </div>
+
             <div class="form-group">
-                <label>رقم التليفون (واتساب)</label>
+                <label><i class="fas fa-id-card"></i> الرقم القومي (14 رقم)</label>
+                <input type="text" id="nationalID" class="national-id-highlight" maxlength="14" minlength="14" required placeholder="أدخل 14 رقم باللغة الإنجليزية">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> رقم التليفون</label>
                 <input type="tel" id="phone" required placeholder="01xxxxxxxxx">
             </div>
+
             <div class="form-group">
-                <label>العنوان بالتفصيل</label>
+                <label><i class="fas fa-map-marker-alt"></i> العنوان</label>
                 <input type="text" id="address" required placeholder="المحافظة - المركز - القرية">
             </div>
+
             <div class="form-group">
-                <label>شرح مختصر للطلب</label>
-                <textarea id="summary" rows="4" required placeholder="اكتب تفاصيل طلبك..."></textarea>
+                <label><i class="fas fa-pen"></i> شرح مختصر للطلب</label>
+                <textarea id="summary" rows="4" required placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
             </div>
+
             <div class="form-group">
-                <label>إرفاق صورة الطلب أو المستندات</label>
-                <input type="file" id="fileInput" accept="image/*,.pdf" required>
+                <label><i class="fas fa-paperclip"></i> إرفاق صورة الطلب / المرفقات</label>
+                <input type="file" id="file" required accept="image/*,.pdf">
             </div>
-            <div class="form-group">
-                <label>تعليق أو مقترح إضافي</label>
-                <textarea id="ideas" rows="2" placeholder="اختياري..."></textarea>
-            </div>
-            
-            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب الآن</button>
-            <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري حفظ طلبك وتوليد الكود...</div>
+
+            <button type="submit" id="submitBtn" class="btn-submit">إرسال الطلب الآن</button>
+            <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري حفظ البيانات... برجاء عدم إغلاق الصفحة</div>
         </form>
     </div>
 </div>
@@ -67,28 +71,32 @@
     <div class="form-container">
         <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
         <h2 style="color: var(--primary); margin-top: 20px;">تم استلام طلبك بنجاح</h2>
-        <p>احتفظ بالكود التالي لتتبع حالة طلبك لاحقاً:</p>
-        <div class="tracking-box">
-            <span class="tracking-code" id="displayCode"></span>
-        </div>
-        <br><br>
+        <p>يمكنك الآن تتبع حالة طلبك في أي وقت باستخدام <b>رقمك القومي</b>.</p>
+        <br>
         <a href="index.html" style="display: inline-block; text-decoration: none; color: white; background: var(--primary); padding: 15px 30px; border-radius: 10px; font-weight: bold;">العودة للرئيسية</a>
     </div>
 </div>
 
 <script>
-    // الرابط الأخير بتاعك
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFcaC4t03i035-ahVjZf6ECaR6qhppyMX5uTIeI3iNqOhreDZMreHbhvYidGdzM0HB4A/exec";
+    // الرابط بتاعك
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAUbTWRcpEpeTpm3lVQaebdqut7JPRp7bd-DZokFLPN0RwzsRNp6_tjJ4fupbsZFoWgA/exec";
 
-    document.getElementById('requestForm').onsubmit = function(e) {
+    document.getElementById('applyForm').onsubmit = function(e) {
         e.preventDefault();
+        
         const btn = document.getElementById('submitBtn');
         const loader = document.getElementById('loader');
-        const fileInput = document.getElementById('fileInput');
+        const fileInput = document.getElementById('file');
         const file = fileInput.files[0];
 
+        // التأكد من أن الرقم القومي 14 رقم
+        const nID = document.getElementById('nationalID').value;
+        if(nID.length !== 14) {
+            alert("خطأ: يجب أن يتكون الرقم القومي من 14 رقم");
+            return;
+        }
+
         btn.disabled = true;
-        btn.innerText = "جاري الإرسال...";
         loader.style.display = "block";
 
         const reader = new FileReader();
@@ -97,31 +105,32 @@
             const payload = {
                 fileData: reader.result,
                 fileName: file.name,
-                fullIdentity: document.getElementById('fullIdentity').value,
+                fullIdentity: document.getElementById('name').value,
+                nationalID: nID,
                 phone: document.getElementById('phone').value,
                 address: document.getElementById('address').value,
-                summary: document.getElementById('summary').value,
-                ideas: document.getElementById('ideas').value || "لا يوجد"
+                summary: document.getElementById('summary').value
             };
 
             fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
             .then(res => res.json())
-            .then(response => {
-                if(response.code) {
+            .then(data => {
+                if(data.status === "success") {
                     document.getElementById('formSection').style.display = 'none';
                     document.getElementById('successSection').style.display = 'block';
-                    document.getElementById('displayCode').innerText = response.code;
-                    window.scrollTo(0,0);
+                } else {
+                    alert("حدث خطأ في السيرفر: " + data.message);
+                    btn.disabled = false;
+                    loader.style.display = "none";
                 }
             })
             .catch(err => {
-                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
+                alert("حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.");
                 btn.disabled = false;
                 loader.style.display = "none";
             });
         };
     };
 </script>
-
 </body>
 </html>
