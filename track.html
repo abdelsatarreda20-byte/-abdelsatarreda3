@@ -9,7 +9,6 @@
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f8fafc; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
         
-        /* الهيدر الجديد */
         .header-track { 
             background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%); 
             color: white; padding: 60px 20px; text-align: center;
@@ -25,7 +24,7 @@
         input { 
             width: 100%; padding: 15px; border: 2px solid #e2e8f0; 
             border-radius: 12px; font-size: 20px; text-align: center; 
-            margin-bottom: 20px; transition: 0.3s; 
+            margin-bottom: 20px; transition: 0.3s; box-sizing: border-box;
         }
         input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 10px rgba(197,160,89,0.2); }
 
@@ -36,9 +35,8 @@
         }
         .btn-track:hover { background: var(--gold); transform: translateY(-2px); }
 
-        /* تصميم المربعات الصفراء (الكروت) */
         .req-card { 
-            background: #fffef0; /* أصفر خفيف جداً */
+            background: #fffef0; 
             padding: 20px; border-radius: 15px; 
             border-right: 6px solid var(--gold); 
             margin-top: 20px; text-align: right;
@@ -53,6 +51,11 @@
             background: var(--primary); color: white; margin-top: 10px; 
         }
         
+        .order-number {
+            float: left; background: var(--gold); color: white;
+            padding: 2px 10px; border-radius: 5px; font-size: 12px;
+        }
+
         .loader { 
             display: none; margin: 20px auto; 
             border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); 
@@ -65,8 +68,8 @@
 <body>
 
     <div class="header-track">
-        <h1><i class="fas fa-file-invoice"></i> نظام متابعة الطلبات</h1>
-        <p>الشفافية في خدمتكم.. استعلم عن حالة طلبك الآن</p>
+        <h1><i class="fas fa-search-location"></i> نظام استعلام المواطنين</h1>
+        <p>متابعة حالة الطلبات المسجلة بالرقم القومي</p>
     </div>
 
     <div class="track-container">
@@ -77,7 +80,7 @@
         <div class="loader" id="loader"></div>
         <div id="results"></div>
         
-        <div style="margin-top:25px; border-top:1px solid #eee; padding-top:15px;">
+        <div style="margin-top:25px; border-top:1px solid #eee; padding-top:15px; text-align: center;">
             <a href="index.html" style="color:var(--primary); text-decoration:none; font-size:14px;">
                 <i class="fas fa-arrow-right"></i> العودة للرئيسية
             </a>
@@ -85,10 +88,11 @@
     </div>
 
 <script>
+    // تأكد من تحديث هذا الرابط بعد كل Deployment جديد
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     function trackRequest() {
-        const id = document.getElementById('citizenId').value;
+        const id = document.getElementById('citizenId').value.trim();
         const resDiv = document.getElementById('results');
         const loader = document.getElementById('loader');
 
@@ -100,36 +104,44 @@
         resDiv.innerHTML = "";
         loader.style.display = "block";
 
-        // استدعاء الأكشن track اللي عملناه في السكريبت
-        fetch(`${SCRIPT_URL}?action=track&id=${id}`)
+        // طلب البيانات بالأكشن track
+        fetch(`${SCRIPT_URL}?action=track&id=${encodeURIComponent(id)}`)
         .then(res => res.json())
         .then(data => {
             loader.style.display = "none";
             
             if(!data || data.length === 0) {
-                resDiv.innerHTML = "<p style='color:#ef4444; margin-top:20px;'><i class='fas fa-exclamation-triangle'></i> عذراً، لم يتم العثور على طلبات مسجلة لهذا الرقم القومي.</p>";
+                resDiv.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:#ef4444;">
+                        <i class="fas fa-user-slash fa-3x"></i>
+                        <p style="margin-top:15px;">عذراً، لا توجد طلبات مسجلة لهذا الرقم القومي في سجلاتنا.</p>
+                    </div>`;
                 return;
             }
 
-            resDiv.innerHTML = `<h4 style="color:var(--primary); margin:20px 0 10px;">أحدث ${data.length} طلبات تم العثور عليها:</h4>`;
+            resDiv.innerHTML = `<h4 style="color:var(--primary); margin:20px 0 10px;">تم العثور على ${data.length} طلبات:</h4>`;
             
             data.forEach(req => {
-                const dateText = new Date(req.date).toLocaleDateString('ar-EG', {
-                    day: 'numeric', month: 'long', year: 'numeric'
-                });
-
+                // عرض الكروت بالبيانات القادمة من السكريبت مباشرة
                 resDiv.innerHTML += `
                     <div class="req-card">
-                        <div style="font-size: 12px; color: #64748b;"><i class="far fa-clock"></i> ${dateText}</div>
-                        <div style="margin: 12px 0; color:#1e293b; line-height:1.6;"><strong>موضوع الطلب:</strong><br>${req.summary}</div>
-                        <div class="status-badge"><i class="fas fa-check-circle"></i> حالة الطلب: ${req.status}</div>
+                        <span class="order-number">طلب رقم: ${req.orderNo}</span>
+                        <div style="font-size: 12px; color: #64748b;"><i class="far fa-clock"></i> تاريخ التسجيل: ${req.date}</div>
+                        <div style="margin: 15px 0 10px; color:#1e293b; line-height:1.6;">
+                            <strong>موضوع الطلب:</strong><br>
+                            ${req.summary || 'لم يتم إدراج ملخص'}
+                        </div>
+                        <div class="status-badge">
+                            <i class="fas fa-info-circle"></i> الحالة: ${req.status}
+                        </div>
                     </div>
                 `;
             });
         })
         .catch(err => {
             loader.style.display = "none";
-            alert("حدث خطأ في الاتصال بالخادم، يرجى المحاولة مرة أخرى.");
+            console.error(err);
+            alert("حدث خطأ في الاتصال بالقاعدة، يرجى التأكد من اتصالك بالإنترنت.");
         });
     }
 </script>
