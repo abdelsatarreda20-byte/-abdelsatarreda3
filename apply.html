@@ -14,13 +14,15 @@
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
+        
+        /* تصميم مربع المقترحات الذهبي */
+        .suggestion-box { background: #fffdf0; border: 1px dashed var(--gold); padding: 15px; border-radius: 12px; margin-top: 25px; }
+        
         .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-submit:hover { background: var(--gold); }
+        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); }
         #loader { display: none; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; }
         #successSection { display: none; text-align: center; padding: 40px 20px; }
         .national-id-highlight { background: #fdfae6; border: 1px solid #f1e0a2; }
-        
-        /* تصميم رسالة الإغلاق */
         #lockScreen { display: none; text-align: center; padding: 100px 20px; }
         .lock-box { background: white; max-width: 600px; margin: auto; padding: 50px; border-radius: 20px; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     </style>
@@ -75,6 +77,12 @@
                 <input type="file" id="file" required accept="image/*,.pdf">
             </div>
 
+            <div class="suggestion-box">
+                <label style="color: #856404;"><i class="fas fa-lightbulb"></i> لو عندك أي تعليق أو فكرة جديدة اتفضل هنا:</label>
+                <textarea id="suggestion" rows="2" placeholder="أفكارك تهمنا لتطوير الدائرة..."></textarea>
+            </div>
+            <br>
+
             <button type="submit" id="submitBtn" class="btn-submit">إرسال الطلب الآن</button>
             <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري حفظ البيانات... برجاء عدم إغلاق الصفحة</div>
         </form>
@@ -92,10 +100,9 @@
 </div>
 
 <script>
-    // الرابط الثابت للسكريبت
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
+    // الرابط الموحد الجديد
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
-    // 1. فحص حالة المنصة فور فتح الصفحة
     window.onload = function() {
         fetch(`${SCRIPT_URL}?action=checkStatus`)
         .then(res => res.json())
@@ -108,20 +115,15 @@
         });
     };
 
-    // 2. كود إرسال الفورم (الأصلي الخاص بك مع تعديلات بسيطة للربط)
     document.getElementById('applyForm').onsubmit = function(e) {
         e.preventDefault();
-        
         const btn = document.getElementById('submitBtn');
         const loader = document.getElementById('loader');
         const fileInput = document.getElementById('file');
         const file = fileInput.files[0];
-
         const nID = document.getElementById('nationalID').value;
-        if(nID.length !== 14) {
-            alert("خطأ: يجب أن يتكون الرقم القومي من 14 رقم");
-            return;
-        }
+
+        if(nID.length !== 14) { alert("خطأ: الرقم القومي 14 رقم"); return; }
 
         btn.disabled = true;
         loader.style.display = "block";
@@ -136,7 +138,8 @@
                 nationalID: nID,
                 phone: document.getElementById('phone').value,
                 address: document.getElementById('address').value,
-                summary: document.getElementById('summary').value
+                summary: document.getElementById('summary').value,
+                suggestion: document.getElementById('suggestion').value // إرسال المقترح
             };
 
             fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
@@ -146,13 +149,13 @@
                     document.getElementById('formSection').style.display = 'none';
                     document.getElementById('successSection').style.display = 'block';
                 } else {
-                    alert("حدث خطأ: " + data.message);
+                    alert("خطأ: " + data.message);
                     btn.disabled = false;
                     loader.style.display = "none";
                 }
             })
             .catch(err => {
-                alert("حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.");
+                alert("حدث خطأ في الاتصال");
                 btn.disabled = false;
                 loader.style.display = "none";
             });
