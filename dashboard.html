@@ -13,14 +13,13 @@
         .user-profile { display: flex; align-items: center; gap: 10px; }
         .badge { background: var(--gold); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-        /* رادار النشطين */
         .active-radar { background: rgba(34, 197, 94, 0.1); border: 1px solid var(--online); padding: 15px; border-radius: 12px; margin: 20px 25px; display: none; }
         .dot { height: 10px; width: 10px; background-color: var(--online); border-radius: 50%; display: inline-block; margin-left: 8px; animation: blink 1s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 25px 25px; }
         .stat-card { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.2); cursor: pointer; transition: 0.3s; }
-        .stat-card:hover { border-color: var(--gold); }
+        .stat-card:hover { border-color: var(--gold); transform: translateY(-3px); }
 
         .table-container { padding: 0 25px 50px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 15px; overflow: hidden; }
@@ -55,9 +54,9 @@
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card" onclick="renderTable(allData)"><i class="fas fa-list"></i><h3 id="totalReq">0</h3><p>الكل</p></div>
+    <div class="stat-card" onclick="renderTable(allData)"><i class="fas fa-list"></i><h3 id="totalReq">0</h3><p>كل الطلبات</p></div>
     <div class="stat-card" onclick="filterBy('قيد المراجعة')"><i class="fas fa-clock"></i><h3 id="pendingReq">0</h3><p>قيد المراجعة</p></div>
-    <div class="stat-card" onclick="filterBy('تم الحسم')"><i class="fas fa-check-double"></i><h3 id="doneReq">0</h3><p>تم الحسم</p></div>
+    <div class="stat-card" onclick="filterBy('تم الحسم')"><i class="fas fa-check-double"></i><h3 id="doneReq">0</h3><p>تم الحسم (المنجزة)</p></div>
 </div>
 
 <div class="table-container">
@@ -69,7 +68,7 @@
                 <th>الطلب</th>
                 <th>المرفق</th>
                 <th>الحالة</th>
-                <th id="executorHead" style="display:none;">بواسطة</th>
+                <th id="executorHead" style="display:none;">المنفذ</th>
                 <th>الإجراء</th>
             </tr>
         </thead>
@@ -89,14 +88,12 @@
         document.getElementById('uName').innerText = currentUser.name;
         document.getElementById('uRole').innerText = currentUser.role;
         
-        // إظهار الرادار إذا كان مسموحاً
         if(currentUser.viewActive === "نعم") {
             document.getElementById('radarBox').style.display = 'block';
             updateRadar();
-            setInterval(updateRadar, 30000); // تحديث كل 30 ثانية
+            setInterval(updateRadar, 20000); 
         }
 
-        // إظهار رأس عمود المنفذ إذا كان مسموحاً
         if(currentUser.viewExecutor === "نعم") {
             document.getElementById('executorHead').style.display = 'table-cell';
         }
@@ -119,17 +116,41 @@
         tbody.innerHTML = '';
         data.forEach(row => {
             const tr = document.createElement('tr');
+            // أي حالة غير "قيد المراجعة" تأخذ لون الإنجاز الأخضر
+            const isPending = row[7] === 'قيد المراجعة';
+            const statusClass = isPending ? 'status-pending' : 'status-done';
+            
             tr.innerHTML = `
                 <td>${new Date(row[0]).toLocaleDateString('ar-EG')}</td>
                 <td>${row[2]}</td>
-                <td title="${row[5]}">${row[5].substring(0,20)}...</td>
-                <td><a href="${row[6]}" target="_blank" style="color:var(--gold)">فتح</a></td>
-                <td><span class="status ${row[7]==='قيد المراجعة'?'status-pending':'status-done'}">${row[7]}</span></td>
+                <td title="${row[5]}">${row[5].substring(0,25)}...</td>
+                <td><a href="${row[6]}" target="_blank" style="color:var(--gold); text-decoration:none;"><i class="fas fa-paperclip"></i></a></td>
+                <td><span class="status ${statusClass}">${row[7]}</span></td>
                 ${currentUser.viewExecutor === "نعم" ? `<td>${row[8] || '---'}</td>` : ''}
-                <td><button class="btn-action" onclick="takeAction('${row[1]}')">قرار</button></td>
+                <td><button class="btn-action" onclick="takeAction('${row[1]}')">تعديل</button></td>
             `;
             tbody.appendChild(tr);
         });
+    }
+
+    function updateStats(data) {
+        document.getElementById('totalReq').innerText = data.length;
+        // قيد المراجعة: فقط الطلبات المكتوب فيها "قيد المراجعة"
+        const pendingCount = data.filter(r => r[7] === "قيد المراجعة").length;
+        // تم الحسم: أي طلب حالته ليست "قيد المراجعة" وليست فارغة
+        const doneCount = data.filter(r => r[7] !== "قيد المراجعة" && r[7] !== "").length;
+        
+        document.getElementById('pendingReq').innerText = pendingCount;
+        document.getElementById('doneReq').innerText = doneCount;
+    }
+
+    function filterBy(statusType) {
+        if (statusType === 'قيد المراجعة') {
+            renderTable(allData.filter(r => r[7] === "قيد المراجعة"));
+        } else {
+            // فلتر "تم الحسم" يعرض كل ما هو ليس "قيد المراجعة"
+            renderTable(allData.filter(r => r[7] !== "قيد المراجعة" && r[7] !== ""));
+        }
     }
 
     function updateRadar() {
@@ -142,21 +163,21 @@
 
     function takeAction(id) {
         if(currentUser.canLimit !== "نعم" && currentUser.canGlobal !== "نعم") {
-            alert("ليس لديك صلاحية."); return;
+            alert("ليس لديك صلاحية اتخاذ قرار."); return;
         }
-        const decision = prompt("ادخل القرار النهائي:");
+        const decision = prompt("أدخل حالة الطلب الجديدة أو القرار (مثال: تم الحسم، مرفوض، تم القبول):");
         if(decision) {
             fetch(`${SCRIPT_URL}?action=updateStatus&id=${id}&status=${decision}&executor=${currentUser.name}`)
-            .then(() => { alert("تم الحفظ"); loadData(); });
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    alert("تم تحديث الطلب بنجاح");
+                    loadData();
+                }
+            });
         }
     }
 
-    function filterBy(status) { renderTable(allData.filter(r => r[7] === status)); }
-    function updateStats(data) {
-        document.getElementById('totalReq').innerText = data.length;
-        document.getElementById('pendingReq').innerText = data.filter(r => r[7] === "قيد المراجعة").length;
-        document.getElementById('doneReq').innerText = data.filter(r => r[7] === "تم الحسم").length;
-    }
     function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
 </script>
 </body>
