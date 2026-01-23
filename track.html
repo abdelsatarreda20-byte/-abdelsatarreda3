@@ -1,1 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابعة الطلب | مكتب النائب عبد الستار رضا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; text-align: center; }
+        
+        .header-track { 
+            background: linear-gradient(rgba(15, 28, 77, 0.9), rgba(15, 28, 77, 0.9)), url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1500&q=80');
+            background-size: cover;
+            color: white; 
+            padding: 60px 20px; 
+            border-bottom: 5px solid var(--gold); 
+        }
 
+        .container { 
+            max-width: 600px; 
+            margin: -40px auto 40px; 
+            background: white; 
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        }
+
+        .instruction-text { color: #666; margin-bottom: 25px; font-size: 1.1rem; }
+
+        .search-box { position: relative; margin-bottom: 20px; }
+        
+        input { 
+            width: 100%; 
+            padding: 18px; 
+            border: 2px solid #eee; 
+            border-radius: 12px; 
+            font-size: 20px; 
+            text-align: center; 
+            box-sizing: border-box; 
+            font-weight: bold;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+
+        input:focus { border-color: var(--gold); outline: none; background: #fffdf9; }
+
+        .btn-search { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            border-radius: 12px; 
+            font-size: 1.2rem; 
+            font-weight: bold;
+            cursor: pointer; 
+            width: 100%; 
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-search:hover { background: var(--gold); transform: translateY(-3px); }
+
+        /* منطقة النتائج */
+        #resultArea { 
+            margin-top: 30px; 
+            display: none; 
+            padding: 25px; 
+            border-radius: 15px; 
+            background: #fcfcfc; 
+            border: 1px solid #eee;
+            text-align: right; 
+            animation: fadeIn 0.5s ease;
+        }
+
+        .status-card {
+            border-right: 5px solid var(--gold);
+            padding-right: 20px;
+        }
+
+        .status-label { font-size: 0.9rem; color: #888; margin-bottom: 5px; }
+        .status-value { font-size: 1.3rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .badge-waiting { background: #fff3cd; color: #856404; } /* قيد الانتظار */
+        .badge-process { background: #cce5ff; color: #004085; } /* جاري المعالجة */
+        .badge-done { background: #d4edda; color: #155724; }    /* تم التنفيذ */
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .back-link { display: inline-block; margin-top: 30px; text-decoration: none; color: var(--primary); font-weight: bold; }
+        .back-link:hover { color: var(--gold); }
+    </style>
+</head>
+<body>
+
+<div class="header-track">
+    <h1>متابعة حالة الطلب</h1>
+    <p>أدخل كود المتابعة الخاص بك لمعرفة آخر المستجدات</p>
+</div>
+
+<div class="container">
+    <p class="instruction-text">الكود يتكون من حروف وأرقام (مثال: M J 26 84)</p>
+    
+    <div class="search-box">
+        <input type="text" id="trackCodeInput" placeholder="أدخل كود المتابعة هنا..." maxlength="10">
+    </div>
+    
+    <button class="btn-search" onclick="checkStatus()">
+        <i class="fas fa-search"></i> استعلام الآن
+    </button>
+
+    <div id="resultArea">
+        <div class="status-card">
+            <div class="status-label">الاسم الكريم:</div>
+            <div id="resName" class="status-value">جاري البحث...</div>
+
+            <div class="status-label">حالة الطلب الحالية:</div>
+            <div id="resStatus">
+                <span class="badge badge-waiting">قيد المراجعة الفنية</span>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+            <div class="status-label">توجيه المكتب:</div>
+            <p id="resNote" style="color: #555; line-height: 1.6;">سيتم مراجعة مرفقات طلبكم والرد خلال 48 ساعة عمل.</p>
+        </div>
+    </div>
+
+    <div id="notFound" style="display:none; color: #d9534f; margin-top: 20px; font-weight: bold;">
+        <i class="fas fa-exclamation-triangle"></i> عذراً، هذا الكود غير مسجل لدينا. تأكد من كتابته بشكل صحيح.
+    </div>
+
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية</a>
+</div>
+
+<script>
+    function checkStatus() {
+        const code = document.getElementById('trackCodeInput').value.trim();
+        const resultArea = document.getElementById('resultArea');
+        const notFound = document.getElementById('notFound');
+
+        if(code === "") {
+            alert("من فضلك أدخل كود المتابعة أولاً");
+            return;
+        }
+
+        // ملاحظة: هنا سنربط الكود بجدول جوجل في المرحلة القادمة
+        // حالياً سنقوم بعمل محاكاة (Simulation)
+        
+        resultArea.style.display = 'block';
+        notFound.style.display = 'none';
+        
+        // مثال للبيانات التي ستظهر
+        document.getElementById('resName').innerText = "البيانات ستظهر هنا فور الربط";
+    }
+</script>
+
+</body>
+</html>
