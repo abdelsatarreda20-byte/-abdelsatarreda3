@@ -1,36 +1,97 @@
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("الورقة1");
-    
-    // حفظ المرفق
-    var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.fileData.split(",")[1]), "image/png", data.fileName);
-    var file = DriveApp.getRootFolder().createFile(fileBlob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    var fileUrl = file.getUrl();
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنصة الإلكترونية | مكتب النائب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary-blue: #0f1c4d; --gold: #c5a059; --white: #ffffff; --light-bg: #f4f7f6; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: var(--light-bg); 
+            margin: 0; 
+        }
 
-    // إدراج صف في الأعلى
-    sheet.insertRowBefore(2);
-    
-    var rowData = [
-      new Date(),         // A
-      data.nationalID,    // B
-      data.fullIdentity,  // C
-      data.phone,         // D
-      data.address,       // E
-      data.summary,       // F
-      "",                 // G (فراغ)
-      fileUrl,            // H
-      data.suggestion,    // I (هنا المقترح أو الفكرة الجديدة)
-      "قيد المراجعة",     // J
-      ""                  // K (بواسطة)
-    ];
-    
-    sheet.getRange(2, 1, 1, rowData.length).setValues([rowData]);
-    
-    return out(JSON.stringify({status: "success"}));
-  } catch (err) {
-    return out(JSON.stringify({status: "error", message: err.toString()}));
-  }
-}
+        /* تعديل الهيدر ليحتوي على صورة قبة مجلس الشعب */
+        header { 
+            background: linear-gradient(rgba(15, 28, 77, 0.85), rgba(15, 28, 77, 0.85)), 
+                        url('https://i.ibb.co/fzD9Z1DK/19-2025-638940861396941032-694.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            background-attachment: fixed; /* بيخلي الصورة ثابتة والصفحة بتتحرك فوقها */
+            padding: 80px 20px 120px; 
+            text-align: center; 
+            border-bottom: 5px solid var(--gold); 
+            color: white; 
+        }
+
+        .deputy-img { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 50%; 
+            border: 5px solid var(--gold); 
+            object-fit: cover; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+
+        .main-actions { 
+            display: flex; 
+            justify-content: center; 
+            gap: 30px; 
+            margin-top: -60px; 
+            padding: 0 20px; 
+            flex-wrap: wrap; 
+        }
+
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); 
+            text-align: center; 
+            width: 280px; 
+            text-decoration: none; 
+            color: var(--primary-blue); 
+            border-top: 5px solid transparent; 
+            transition: 0.3s; 
+        }
+        
+        .card:hover { transform: translateY(-10px); border-top-color: var(--gold); }
+        .card i { font-size: 45px; color: var(--gold); margin-bottom: 15px; }
+
+        .volunteer-login { 
+            position: absolute; top: 20px; left: 20px; 
+            color: white; font-size: 24px; text-decoration: none; 
+            opacity: 0.5; z-index: 10; 
+        }
+        
+        h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+    <a href="admin.html" class="volunteer-login"><i class="fas fa-lock"></i></a>
+
+    <header>
+        <img src="https://i.ibb.co/whzHWhZd/6008320486313495499-121.jpg" alt="النائب" class="deputy-img">
+        <h1>المنصة الإلكترونية لتلقي طلبات المواطنين</h1>
+        <div style="font-size: 1.5rem; color: var(--gold); font-weight: bold;">"بالجمع وللجميع"</div>
+    </header>
+
+    <section class="main-actions">
+        <a href="apply.html" class="card" id="applyBtn">
+            <i class="fas fa-file-signature"></i>
+            <h3>تقديم طلب جديد</h3>
+            <p>سجل طلبك أو شكواك أو مقترحك الآن للمتابعة الفورية</p>
+        </a>
+        <a href="track.html" class="card">
+            <i class="fas fa-search-plus"></i>
+            <h3>متابعة طلب سابق</h3>
+            <p>استعلم عن حالة طلبك والقرار المتخذ بشأنه</p>
+        </a>
+    </section>
+
+    </body>
+</html>
