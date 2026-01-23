@@ -9,7 +9,7 @@
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
         .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee; }
         .form-group { margin-bottom: 20px; text-align: right; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
@@ -18,14 +18,14 @@
         .btn-submit:disabled { background: #888; cursor: not-allowed; }
         #successPage { display: none; text-align: center; padding: 50px 20px; }
         .tracking-code { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed var(--gold); display: inline-block; background: #fff9ed; border-radius: 10px; }
-        #loading { display: none; color: var(--primary); font-weight: bold; margin-top: 10px; }
+        #loader { display: none; color: var(--primary); font-weight: bold; margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="mainFormPage">
     <div class="header-apply">
-        <h1>تسجيل طلب جديد بالمرفقات</h1>
+        <h1>تسجيل طلب جديد</h1>
         <p>مكتب النائب عبد الستار رضا</p>
     </div>
 
@@ -33,36 +33,34 @@
         <form id="requestForm">
             <div class="form-group">
                 <label>الاسم رباعي واللقب</label>
-                <input type="text" id="fullIdentity" required placeholder="اكتب الاسم واللقب هنا">
+                <input type="text" id="fullIdentity" required placeholder="اكتب الاسم واللقب">
             </div>
-
             <div class="form-group">
                 <label>رقم التليفون / واتساب</label>
                 <input type="tel" id="phone" required placeholder="01xxxxxxxxx">
             </div>
-
             <div class="form-group">
                 <label>العنوان بالكامل</label>
                 <input type="text" id="address" required>
             </div>
-
+            <div class="form-group">
+                <label>البريد الإلكتروني (اختياري)</label>
+                <input type="email" id="email">
+            </div>
             <div class="form-group">
                 <label>لمحة عن الطلب</label>
                 <textarea id="summary" rows="4" required></textarea>
             </div>
-
             <div class="form-group">
                 <label>ارفاق صورة الطلب أو البطاقة (ضروري)</label>
                 <input type="file" id="fileInput" accept="image/*, .pdf" required>
             </div>
-
             <div class="form-group">
                 <label>أفكار أو تعليقات (اختياري)</label>
                 <textarea id="ideas" rows="2"></textarea>
             </div>
-
             <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب والمرفقات</button>
-            <div id="loading">جاري رفع الملفات.. برجاء الانتظار وعدم غلق الصفحة...</div>
+            <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري رفع الطلب والملفات...</div>
         </form>
     </div>
 </div>
@@ -79,22 +77,20 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4ee1oOh7O-LN4EhWEB9-IbHmU4AKhxxoJq0SY0kWWpMqEAmlzV-ApOTVv2tqPpf-wyg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyexZu76Jq6dMwzpqCt5KUrFgPX7l1v7YMX2grlAg92jTOnFlX2keiONy4rVTF2VDNGeQ/exec";
 
     document.getElementById('requestForm').onsubmit = function(e) {
         e.preventDefault();
-        
         const btn = document.getElementById('submitBtn');
-        const loading = document.getElementById('loading');
+        const loader = document.getElementById('loader');
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
         
-        // كود متابعة ذكي
-        const now = new Date();
-        const trackingCode = "R" + now.getTime().toString().slice(-6);
+        // توليد كود متابعة
+        const trackingCode = "RE" + Math.floor(100000 + Math.random() * 900000);
 
         btn.disabled = true;
-        loading.style.display = "block";
+        loader.style.display = "block";
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -106,6 +102,7 @@
                 phone: document.getElementById('phone').value,
                 address: document.getElementById('address').value,
                 summary: document.getElementById('summary').value,
+                email: document.getElementById('email').value,
                 ideas: document.getElementById('ideas').value,
                 trackingCode: trackingCode
             };
@@ -121,13 +118,12 @@
                 document.getElementById('displayCode').innerText = trackingCode;
             })
             .catch(err => {
-                alert("حدث خطأ في الرفع، تأكد من حجم الملف وحاول مرة أخرى");
+                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
                 btn.disabled = false;
-                loading.style.display = "none";
+                loader.style.display = "none";
             });
         };
     };
 </script>
-
 </body>
 </html>
