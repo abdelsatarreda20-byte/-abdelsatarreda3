@@ -28,13 +28,16 @@
         .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 5px 12px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
         .btn-action:hover { background: var(--gold); color: white; }
         
-        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .status-badge { 
+            padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; 
+            display: inline-block; max-width: 200px; line-height: 1.4;
+        }
+        /* لون افتراضي للنصوص الحرة */
+        .status-msg { background: rgba(197,160,89,0.1); color: var(--gold); border: 1px solid rgba(197,160,89,0.3); }
+        /* لون قيد المراجعة */
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
-        .status-done { background: rgba(34, 197, 94, 0.2); color: var(--green); }
-        
-        /* ستايل خاص للمقترح */
-        .suggestion-text { display: block; font-size: 11px; color: var(--gold); margin-top: 5px; font-style: italic; }
-        .admin-stamp { font-size: 11px; color: #888; font-family: 'Courier New', monospace; }
+
+        .admin-stamp { font-size: 11px; color: #888; font-family: 'Courier New', monospace; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -49,8 +52,8 @@
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>طلبات قيد المراجعة</p> </div>
-    <div class="stat-card" style="border-right-color: var(--green);"> <h3 id="doneReq">0</h3> <p>تم التنفيذ</p> </div>
+    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>بانتظار الرد</p> </div>
+    <div class="stat-card" style="border-right-color: var(--green);"> <h3 id="doneReq">0</h3> <p>تم الرد عليها</p> </div>
     <div class="stat-card" style="border-right-color: #ffcc00;"> <h3 id="duplicateCount">0</h3> <p>مواطنين مكررين ★</p> </div>
     <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الطلبات</p> </div>
 </div>
@@ -61,10 +64,10 @@
             <tr>
                 <th>التاريخ</th>
                 <th>المواطن</th>
-                <th>تفاصيل الطلب ومقترحاته</th>
+                <th>تفاصيل الطلب</th>
                 <th>المرفق</th>
                 <th>بواسطة</th>
-                <th>الحالة</th>
+                <th>حالة الطلب / الرد</th>
                 <th>الإجراء</th>
             </tr>
         </thead>
@@ -75,7 +78,6 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
     
-    // سحب بيانات المسؤول من الجلسة
     const userSession = JSON.parse(sessionStorage.getItem('shadowUser'));
     const adminName = userSession ? userSession.name : "مسؤول";
 
@@ -120,29 +122,30 @@
             data.forEach((row, index) => {
                 const id = row[1].toString().trim();
                 const summary = row[5] || '';
-                const suggestion = row[8] || ''; // العمود I
                 const status = row[9] || 'قيد المراجعة';
-                const adminStamp = row[10] || '---'; // العمود K
+                const adminStamp = row[10] || '---';
                 const rowIndex = index + 2;
 
-                if(status === "تم التنفيذ") done++; else pending++;
-                const statusClass = status === "تم التنفيذ" ? "status-done" : "status-new";
+                // إذا كانت الحالة غير "قيد المراجعة" نعتبرها طلب تم الرد عليه
+                if(status !== "قيد المراجعة") done++; else pending++;
+                
+                // تحديد شكل الحالة (لو قيد مراجعة تأخذ لون أزرق، لو نص حر تأخذ لون ذهبي)
+                const statusClass = status === "قيد المراجعة" ? "status-new" : "status-msg";
 
                 tbody.innerHTML += `<tr>
-                    <td><small>${new Date(row[0]).toLocaleDateString('ar-EG')}</small></td>
+                    <td><small>${row[0]}</small></td>
                     <td>
                         <b>${row[2]}</b><br>
                         <small style="opacity:0.6">${id}</small>
                         ${idCounts[id] > 1 ? '<i class="fas fa-star star" title="مواطن مكرر"></i>' : ''}
                     </td>
-                    <td style="text-align:right; max-width: 300px;">
-                        <div>${summary.substring(0,60)}...</div>
-                        ${suggestion ? `<span class="suggestion-text"><i class="fas fa-lightbulb"></i> مقترح: ${suggestion}</span>` : ''}
+                    <td style="text-align:right; max-width: 250px;">
+                        <div style="font-size:12px;">${summary}</div>
                     </td>
-                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-image"></i></a></td>
+                    <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-image fa-lg"></i></a></td>
                     <td class="admin-stamp">${adminStamp}</td>
                     <td><span class="status-badge ${statusClass}">${status}</span></td>
-                    <td><button class="btn-action" onclick="updateDecision(${rowIndex})">تحديث</button></td>
+                    <td><button class="btn-action" onclick="updateDecision(${rowIndex})"><i class="fas fa-edit"></i> رد</button></td>
                 </tr>`;
             });
             
@@ -153,16 +156,26 @@
         });
     }
 
+    // الدالة المعدلة حسب طلبك: تطلب نصاً واحداً وتمسح الحالة القديمة
     function updateDecision(rowIndex) {
-        const p = prompt("تحديث الحالة (تم التنفيذ / مرفوض / جاري العمل):");
-        if(p) {
-            // نبعث rowIndex واسم المسؤول (adminName)
-            fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(p)}&adminName=${encodeURIComponent(adminName)}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) { loadData(); }
-            });
+        const userMsg = prompt("اكتب الرد الرسمي للمواطن أو حالة الطلب الجديدة:\n(سيتم استبدال 'قيد المراجعة' بهذا النص)");
+        
+        // إذا ضغط إلغاء أو ترك الخانة فارغة، لا تفعل شيئاً (يظل قيد المراجعة)
+        if (userMsg === null || userMsg.trim() === "") {
+            return; 
         }
+
+        // إرسال النص للسكريبت
+        fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(userMsg)}&adminName=${encodeURIComponent(adminName)}`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) { 
+                loadData(); // إعادة تحميل البيانات لرؤية الرد الجديد
+            } else {
+                alert("فشل تحديث البيانات، حاول مرة أخرى.");
+            }
+        })
+        .catch(err => alert("خطأ في الاتصال بالخادم"));
     }
 
     function logout() { sessionStorage.clear(); window.location.href="admin.html"; }
