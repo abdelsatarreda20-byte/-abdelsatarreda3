@@ -21,11 +21,13 @@
         .btn-track:hover { background: var(--gold); }
 
         #results { margin-top: 30px; text-align: right; }
-        .req-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border-right: 5px solid var(--gold); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .req-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border-right: 5px solid var(--gold); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; }
         .status-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; background: var(--primary); color: white; margin-top: 8px; }
         
         .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .limit-note { font-size: 12px; color: #888; margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
@@ -50,8 +52,8 @@
     </div>
 
 <script>
-    // الرابط الثابت الخاص بك
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
+    // الرابط الموحد الجديد الخاص بك
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     function trackRequest() {
         const id = document.getElementById('citizenId').value;
@@ -66,12 +68,14 @@
         resDiv.innerHTML = "";
         loader.style.display = "block";
 
-        // طلب جلب البيانات من السكريبت
+        // جلب كل البيانات بفلترة ذكية
         fetch(`${SCRIPT_URL}?action=getRequests&t=${new Date().getTime()}`)
         .then(res => res.json())
         .then(data => {
             loader.style.display = "none";
-            // فلترة الطلبات الخاصة بهذا الرقم فقط
+            
+            // 1. فلترة الطلبات الخاصة بالمواطن
+            // 2. ترتيبها من الأحدث للأقدم (Data أصلاً معمول لها reverse في السكريبت، فبنأخد أول العناصر)
             const myRequests = data.filter(row => row[1].toString().trim() === id.trim());
 
             if(myRequests.length === 0) {
@@ -79,21 +83,27 @@
                 return;
             }
 
-            // عرض أحدث 3 طلبات فقط
-            resDiv.innerHTML = "<h3 style='color:var(--primary)'>آخر الطلبات المقدمة:</h3>";
+            // عرض أحدث 3 طلبات فقط لضمان سرعة الصفحة ونظافة التصميم
+            resDiv.innerHTML = "<h3 style='color:var(--primary); border-bottom:1px solid #eee; padding-bottom:10px;'>آخر 3 مستجدات لطلباتك:</h3>";
+            
             myRequests.slice(0, 3).forEach(req => {
                 resDiv.innerHTML += `
                     <div class="req-card">
-                        <div style="font-size: 13px; color: #777;">بتاريخ: ${new Date(req[0]).toLocaleDateString('ar-EG')}</div>
-                        <div style="margin: 10px 0;"><strong>موضوع الطلب:</strong> ${req[5]}</div>
-                        <div class="status-tag">${req[9] || 'قيد الدراسة والمراجعة'}</div>
+                        <div style="font-size: 13px; color: #777;"><i class="far fa-calendar-alt"></i> بتاريخ: ${new Date(req[0]).toLocaleDateString('ar-EG')}</div>
+                        <div style="margin: 10px 0; line-height:1.4;"><strong>موضوع الطلب:</strong> ${req[5]}</div>
+                        <div class="status-tag"><i class="fas fa-info-circle"></i> الحـالة: ${req[9] || 'قيد الدراسة'}</div>
+                        ${req[10] ? `<div style="font-size:11px; color:#aaa; margin-top:5px;">تم التحديث بواسطة: ${req[10]}</div>` : ''}
                     </div>
                 `;
             });
+
+            if(myRequests.length > 3) {
+                resDiv.innerHTML += `<div class="limit-note">* تظهر هنا آخر 3 طلبات فقط من إجمالي ${myRequests.length} طلبات لك.</div>`;
+            }
         })
         .catch(err => {
             loader.style.display = "none";
-            alert("حدث خطأ في الاتصال بالخادم، حاول مرة أخرى.");
+            alert("حدث خطأ في الاتصال، تأكد من جودة الإنترنت وحاول ثانية.");
         });
     }
 </script>
