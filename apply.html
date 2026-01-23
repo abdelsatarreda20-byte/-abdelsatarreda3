@@ -1,1 +1,126 @@
-https://script.google.com/macros/s/AKfycbzbiw6fYz06CXqTVIbmSr6jC2JZw6PIMMZ_EQ4d9TllosYds6Ei-nCOG4QzEEq6pvI6Rg/exec
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقديم طلب جديد | مكتب النائب عبد الستار رضا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
+        .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
+        .form-container { max-width: 700px; margin: -30px auto 20px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background: var(--gold); transform: translateY(-2px); }
+        #successPage { display: none; text-align: center; padding: 50px 20px; }
+        .tracking-code { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed var(--gold); display: inline-block; background: #fff9ed; border-radius: 10px; }
+        .loader { display: none; border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div id="mainFormPage">
+    <div class="header-apply">
+        <h1>تسجيل طلب جديد</h1>
+        <p>مكتب النائب عبد الستار رضا</p>
+    </div>
+
+    <div class="form-container">
+        <form id="requestForm">
+            <div class="form-group">
+                <label>الاسم رباعي واللقب</label>
+                <input type="text" name="fullIdentity" required placeholder="اكتب الاسم واللقب هنا">
+            </div>
+
+            <div class="form-group">
+                <label>رقم التليفون / واتساب</label>
+                <input type="tel" name="phone" required placeholder="01xxxxxxxxx">
+            </div>
+
+            <div class="form-group">
+                <label>العنوان بالكامل</label>
+                <input type="text" name="address" required placeholder="المركز - القرية">
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني (اختياري)</label>
+                <input type="email" name="email" placeholder="example@mail.com">
+            </div>
+
+            <div class="form-group">
+                <label>لمحة عن الطلب</label>
+                <textarea name="summary" rows="4" required placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>أفكار أو تعليقات (اختياري)</label>
+                <textarea name="ideas" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب</button>
+            <div class="loader" id="loader"></div>
+        </form>
+    </div>
+</div>
+
+<div id="successPage">
+    <div class="form-container">
+        <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
+        <h2>تم الإرسال بنجاح</h2>
+        <p>كود المتابعة الخاص بك (يرجى حفظه للاستعلام عن الطلب):</p>
+        <div class="tracking-code" id="displayCode">---</div>
+        <br><br>
+        <a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none;">العودة للرئيسية</a>
+    </div>
+</div>
+
+<script>
+    // الرابط الأخير الذي أرسلته (AKfycbw2w...)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2w-4ieBym9IbXvtAhf87Ixsf0slt-zRznD7nEG9RFWsn9fLIBu-9d5-wSsWp6UAb1LA/exec";
+
+    document.getElementById('requestForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        // توليد الكود الذكي
+        const now = new Date();
+        const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+        const trackingCode = days[now.getDay()] + months[now.getMonth()] + now.getFullYear().toString().slice(-2) + Math.floor(10 + Math.random() * 90);
+
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+        
+        btn.disabled = true;
+        loader.style.display = 'block';
+
+        const formData = new FormData(this);
+        formData.append('trackingCode', trackingCode);
+
+        // تحويل FormData إلى URLSearchParams لضمان وصول البيانات بشكل سليم للـ Apps Script
+        const params = new URLSearchParams(formData);
+
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', // لضمان الإرسال حتى مع وجود قيود المتصفح
+            body: params 
+        })
+        .then(() => {
+            // بما أننا نستخدم no-cors، سنفترض النجاح بمجرد اكتمال الطلب
+            document.getElementById('mainFormPage').style.display = 'none';
+            document.getElementById('successPage').style.display = 'block';
+            document.getElementById('displayCode').innerText = trackingCode;
+        })
+        .catch(err => {
+            alert("عذراً، حدث خطأ. تأكد من اتصالك بالإنترنت");
+            btn.disabled = false;
+            loader.style.display = 'none';
+        });
+    };
+</script>
+
+</body>
+</html>
