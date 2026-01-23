@@ -3,98 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تتبع حالة الطلب | منصة النائب</title>
+    <title>تقديم طلب جديد | منصة النائب</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0f1c4d; --gold: #c5a059; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; text-align: right; }
-        .header { background: var(--primary); color: white; padding: 30px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .container { max-width: 500px; margin: 30px auto; padding: 20px; }
-        .search-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
-        input { width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #ddd; border-radius: 10px; font-size: 18px; text-align: center; box-sizing: border-box; }
-        .btn-track { background: var(--primary); color: white; border: none; padding: 15px 30px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-track:hover { background: var(--gold); }
-        #loader { display: none; margin: 20px 0; color: var(--primary); font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 0; text-align: right; }
+        .header-apply { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
+        .form-container { max-width: 600px; margin: -30px auto 40px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background: var(--gold); }
+        #loader { display: none; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; }
         
-        /* نتائج البحث */
-        #result { display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 15px; border-right: 8px solid var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .info-row { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .info-label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px; }
-        .status-badge { display: inline-block; padding: 8px 15px; border-radius: 20px; background: #e8f0fe; color: #1a73e8; font-weight: bold; }
+        /* قسم النجاح - مخفي في البداية */
+        #successSection { display: none; text-align: center; padding: 40px 20px; }
+        .tracking-box { background: #fff9ed; border: 2px dashed var(--gold); border-radius: 15px; padding: 20px; display: inline-block; margin: 20px 0; }
+        .tracking-code { font-size: 2.5rem; color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1><i class="fas fa-search"></i> تتبع حالة طلبك</h1>
-    <p>أدخل كود المتابعة لمعرفة آخر المستجدات</p>
+<div id="formSection">
+    <div class="header-apply">
+        <h1><i class="fas fa-file-signature"></i> تسجيل طلب جديد</h1>
+        <p>مكتب النائب عبد الستار رضا</p>
+    </div>
+    <div class="form-container">
+        <form id="requestForm">
+            <div class="form-group">
+                <label>الاسم رباعي واللقب</label>
+                <input type="text" id="fullIdentity" required placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group">
+                <label>رقم التليفون (واتساب)</label>
+                <input type="tel" id="phone" required placeholder="01xxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>العنوان بالتفصيل</label>
+                <input type="text" id="address" required placeholder="المحافظة - المركز - القرية">
+            </div>
+            <div class="form-group">
+                <label>شرح مختصر للطلب</label>
+                <textarea id="summary" rows="4" required placeholder="اكتب تفاصيل طلبك..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>إرفاق صورة الطلب أو المستندات</label>
+                <input type="file" id="fileInput" accept="image/*,.pdf" required>
+            </div>
+            <div class="form-group">
+                <label>تعليق أو مقترح إضافي</label>
+                <textarea id="ideas" rows="2" placeholder="اختياري..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب الآن</button>
+            <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري حفظ طلبك وتوليد الكود...</div>
+        </form>
+    </div>
 </div>
 
-<div class="container">
-    <div class="search-box">
-        <label style="font-weight: bold; color: var(--primary);">كود المتابعة</label>
-        <input type="text" id="trackInput" placeholder="مثال: FJ261" style="text-transform: uppercase;">
-        <button class="btn-track" onclick="trackOrder()">استعلام عن الحالة</button>
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري البحث في السجلات...</div>
-    </div>
-
-    <div id="result">
-        <div class="info-row">
-            <span class="info-label">اسم مقدم الطلب:</span>
-            <span id="resName">-</span>
+<div id="successSection">
+    <div class="form-container">
+        <i class="fas fa-check-circle" style="font-size: 80px; color: #28a745;"></i>
+        <h2 style="color: var(--primary); margin-top: 20px;">تم استلام طلبك بنجاح</h2>
+        <p>احتفظ بالكود التالي لتتبع حالة طلبك لاحقاً:</p>
+        <div class="tracking-box">
+            <span class="tracking-code" id="displayCode"></span>
         </div>
-        <div class="info-row">
-            <span class="info-label">تاريخ تقديم الطلب:</span>
-            <span id="resDate">-</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">حالة الطلب الحالية:</span>
-            <span id="resStatus" class="status-badge">قيد المراجعة</span>
-        </div>
-        <div id="noteBox" style="background: #fff9ed; padding: 10px; border-radius: 8px; font-size: 14px; color: #666;">
-            <i class="fas fa-info-circle"></i> سيتم تحديث الحالة فور مراجعة المكتب للطلب.
-        </div>
+        <br><br>
+        <a href="index.html" style="display: inline-block; text-decoration: none; color: white; background: var(--primary); padding: 15px 30px; border-radius: 10px; font-weight: bold;">العودة للرئيسية</a>
     </div>
 </div>
 
 <script>
-    // رابط السكريبت الجديد الخاص بك
+    // الرابط الأخير بتاعك
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFcaC4t03i035-ahVjZf6ECaR6qhppyMX5uTIeI3iNqOhreDZMreHbhvYidGdzM0HB4A/exec";
 
-    function trackOrder() {
-        const code = document.getElementById('trackInput').value.trim().toUpperCase();
-        if(!code) { alert("من فضلك أدخل كود المتابعة أولاً"); return; }
-
+    document.getElementById('requestForm').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
         const loader = document.getElementById('loader');
-        const result = document.getElementById('result');
-        
-        loader.style.display = "block";
-        result.style.display = "none";
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
 
-        // إرسال طلب تتبع
-        fetch(SCRIPT_URL + "?action=track&code=" + code)
-        .then(res => res.json())
-        .then(data => {
-            loader.style.display = "none";
-            if(data.found) {
-                result.style.display = "block";
-                document.getElementById('resName').innerText = data.name;
-                document.getElementById('resDate').innerText = data.date;
-                document.getElementById('resStatus').innerText = data.status;
-                
-                // تغيير لون الحالة بناءً على الرد
-                const badge = document.getElementById('resStatus');
-                if(data.status.includes("تم")) badge.style.color = "#28a745";
-                if(data.status.includes("رفض")) badge.style.color = "#dc3545";
-            } else {
-                alert("عذراً، لم يتم العثور على طلب بهذا الكود. تأكد من صحة الكود.");
-            }
-        })
-        .catch(err => {
-            loader.style.display = "none";
-            alert("حدث خطأ في الاتصال، تأكد من أن الكود صحيح.");
-        });
-    }
+        btn.disabled = true;
+        btn.innerText = "جاري الإرسال...";
+        loader.style.display = "block";
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+            const payload = {
+                fileData: reader.result,
+                fileName: file.name,
+                fullIdentity: document.getElementById('fullIdentity').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                summary: document.getElementById('summary').value,
+                ideas: document.getElementById('ideas').value || "لا يوجد"
+            };
+
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(response => {
+                if(response.code) {
+                    document.getElementById('formSection').style.display = 'none';
+                    document.getElementById('successSection').style.display = 'block';
+                    document.getElementById('displayCode').innerText = response.code;
+                    window.scrollTo(0,0);
+                }
+            })
+            .catch(err => {
+                alert("حدث خطأ، يرجى المحاولة مرة أخرى.");
+                btn.disabled = false;
+                loader.style.display = "none";
+            });
+        };
+    };
 </script>
 
 </body>
