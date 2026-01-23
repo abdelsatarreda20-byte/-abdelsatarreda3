@@ -3,229 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المنصة الرقمية | النائب عبد الستار رضا</title>
+    <title>المنصة الإلكترونية | النائب عبد الستار رضا</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #020617;
-            --accent-gold: #d4af37;
-            --glass-white: rgba(255, 255, 255, 0.03);
-            --border-white: rgba(255, 255, 255, 0.1);
+            --primary-navy: #0a1128;
+            --gold: #c5a059;
+            --white: #ffffff;
+            --soft-bg: #f8f9fa;
         }
 
         body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
-            background-color: var(--bg-color);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #fff;
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--soft-bg);
+            color: var(--primary-navy);
         }
 
-        /* توهج خلفي يعطي انسيابية */
-        .blur-bg {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
-            top: -100px;
-            right: -100px;
-            z-index: 0;
-        }
-
-        .volunteer-access {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            z-index: 100;
-            color: rgba(255,255,255,0.2);
-            font-size: 22px;
-            transition: 0.5s;
-        }
-        .volunteer-access:hover { color: var(--accent-gold); transform: rotate(15deg); }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 40px;
-            z-index: 10;
-        }
-
-        /* الجانب النصي */
-        .info-section {
-            flex: 1;
-            animation: fadeInRight 1s ease-out;
-        }
-
-        .label-tag {
-            background: var(--glass-white);
-            border: 1px solid var(--border-white);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            color: var(--accent-gold);
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-            display: inline-block;
-        }
-
-        .main-headline {
-            font-size: 4rem;
-            font-weight: 800;
-            margin: 0;
-            line-height: 1.1;
-            background: linear-gradient(135deg, #fff 60%, #999);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .deputy-title-modern {
-            font-size: 1.6rem;
-            color: #94a3b8;
-            margin: 20px 0 40px;
-            font-weight: 300;
-        }
-
-        /* الأزرار الانسيابية */
-        .cta-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 16px 35px;
-            border-radius: 100px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-gold {
-            background: var(--accent-gold);
-            color: #000;
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
-        }
-
-        .btn-glass {
-            background: var(--glass-white);
-            color: #fff;
-            border: 1px solid var(--border-white);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-glass:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: var(--accent-gold);
-        }
-
-        /* قسم الصورة الإبداعي */
-        .image-section {
-            flex: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            animation: fadeInLeft 1.2s ease-out;
-        }
-
-        .profile-mask {
-            width: 450px;
-            height: 450px;
-            background: var(--glass-white);
-            border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
-            overflow: hidden;
-            border: 2px solid var(--border-white);
-            position: relative;
-        }
-
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top;
-            transition: 0.6s;
-        }
-
-        .profile-mask:hover .profile-img {
-            transform: scale(1.05);
-        }
-
-        .motto-badge {
+        /* بوابة المتطوعين - أيقونة قفل في الزاوية */
+        .volunteer-gate {
             position: absolute;
-            bottom: 20px;
-            right: 0;
-            background: #fff;
-            color: #000;
-            padding: 12px 25px;
-            font-weight: 900;
-            border-radius: 50px 0 50px 50px;
-            font-size: 1.1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            top: 25px;
+            left: 25px;
+            z-index: 100;
+            color: rgba(255,255,255,0.4);
+            font-size: 22px;
+            transition: 0.3s;
+        }
+        .volunteer-gate:hover { color: var(--gold); }
+
+        /* الهيدر الفخم: صورة كبيرة بجانب النص */
+        header {
+            background: linear-gradient(135deg, #0a1128 0%, #1c2b59 100%);
+            padding: 60px 5% 120px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 50px;
+            border-bottom: 6px solid var(--gold);
         }
 
-        /* أنيميشن */
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        /* تنسيق الصورة: كبيرة وواضحة جداً */
+        .deputy-image-container {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
 
-        /* للهواتف */
-        @media (max-width: 968px) {
-            .container { flex-direction: column-reverse; text-align: center; padding: 100px 20px; }
-            .profile-mask { width: 300px; height: 300px; }
-            .main-headline { font-size: 2.5rem; }
-            .cta-group { flex-direction: column; width: 100%; }
-            .btn { justify-content: center; }
+        .deputy-image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 2px solid rgba(197, 160, 89, 0.3);
+        }
+
+        .header-text {
+            flex: 1.5;
+            min-width: 320px;
+        }
+
+        .header-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .deputy-name {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--gold);
+            margin: 0;
+        }
+
+        .deputy-sub {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin: 10px 0 30px;
+        }
+
+        .motto-banner {
+            background: var(--gold);
+            color: var(--primary-navy);
+            display: inline-block;
+            padding: 10px 30px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            border-radius: 5px;
+        }
+
+        /* الأيقونات والكروت: كما أحببتها في التصميم الأول */
+        .main-actions {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: -60px; /* تداخل الكروت مع الهيدر */
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 45px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 320px;
+            text-decoration: none;
+            color: var(--primary-navy);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-bottom: 5px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            border-bottom: 5px solid var(--gold);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card i {
+            font-size: 60px; /* حجم أيقونات كبير */
+            color: var(--gold);
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            font-size: 1.7rem;
+            margin: 0 0 15px 0;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 80px 20px 40px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 992px) {
+            header { text-align: center; padding: 100px 20px; }
+            .deputy-image-container { max-width: 280px; margin: 0 auto; }
+            .deputy-name { font-size: 2.2rem; }
+            .main-actions { margin-top: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="blur-bg"></div>
-
-    <a href="login.html" class="volunteer-access" title="دخول المسؤولين">
-        <i class="fas fa-fingerprint"></i>
+    <a href="login.html" class="volunteer-gate" title="دخول المتطوعين">
+        <i class="fas fa-lock"></i>
     </a>
 
-    <main class="container">
-        
-        <div class="image-section">
-            <div class="profile-mask">
-                <img src="https://i.ibb.co/whzHWhZd/6008320486313495499-121.jpg" alt="النائب عبد الستار رضا" class="profile-img">
-            </div>
-            <div class="motto-badge">"بالجمع وللجميع"</div>
+    <header>
+        <div class="deputy-image-container">
+            <img src="https://i.ibb.co/whzHWhZd/6008320486313495499-121.jpg" alt="النائب عبد الستار رضا">
         </div>
 
-        <div class="info-section">
-            <span class="label-tag">المنصة الإلكترونية الذكية</span>
-            <h1 class="main-headline">النائب <br> عبد الستار رضا</h1>
-            <p class="deputy-title-modern">عضو مجلس النواب المصري (أرمنت والقرنة) <br> نستخدم التكنولوجيا لتقريب المسافات وخدمة المواطن.</p>
-            
-            <div class="cta-group">
-                <a href="apply.html" class="btn btn-gold">
-                    <i class="fas fa-paper-plane"></i>
-                    تقديم طلب جديد
-                </a>
-                <a href="track.html" class="btn btn-glass">
-                    <i class="fas fa-search"></i>
-                    متابعة الطلبات
-                </a>
-            </div>
+        <div class="header-text">
+            <h1>المنصة الإلكترونية الرسمية</h1>
+            <div class="deputy-name">النائب عبد الستار رضا</div>
+            <div class="deputy-sub">عضو مجلس النواب المصري (أرمنت - القرنة)</div>
+            <div class="motto-banner">"بالجمع وللجميع"</div>
         </div>
+    </header>
 
-    </main>
+    <section class="main-actions">
+        <a href="apply.html" class="card">
+            <i class="fas fa-file-signature"></i>
+            <h3>تقديم طلب جديد</h3>
+            <p>سجل شكواك أو طلبك الآن وسنقوم بمراجعتها فوراً من خلال المكتب الفني والمتابعة</p>
+        </a>
+
+        <a href="track.html" class="card">
+            <i class="fas fa-search-location"></i>
+            <h3>متابعة طلب سابق</h3>
+            <p>استعلم عن حالة طلبك ومدى الإنجاز عبر الرقم القومي الخاص بك بكل سهولة</p>
+        </a>
+    </section>
+
+    <footer>
+        المكتب الرقمي للنائب عبد الستار رضا <br>
+        دائرة أرمنت والقرنة - محافظة الأقصر &copy; 2026
+    </footer>
 
 </body>
 </html>
