@@ -5,26 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المكتب الرقمي للمواطنين</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* التنسيق المباشر هنا لضمان التشغيل */
+        :root {
+            --primary-blue: #1a2a6c;
+            --gold: #c5a059;
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(rgba(26, 42, 108, 0.9), rgba(26, 42, 108, 0.9)), 
+                        url('https://images.unsplash.com/photo-1555848962-6e79363ec58f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--gold);
+        }
+
+        header h1 { margin: 0; font-size: 2.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        header p { font-size: 1.2rem; opacity: 0.9; }
+
+        .main-actions {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: -50px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 280px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-blue);
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card i { 
+            font-size: 50px; 
+            margin-bottom: 20px; 
+            color: var(--gold);
+            display: block;
+        }
+
+        .card h3 { margin: 15px 0; font-size: 1.5rem; }
+        .card p { color: #666; font-size: 0.95rem; line-height: 1.6; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .main-actions { margin-top: 20px; }
+        }
+    </style>
 </head>
 <body>
 
     <header>
         <h1>المنصة الإلكترونية لخدمة المواطنين</h1>
-        <p>نعمل من أجلكم.. لتوصيل صوتكم ومتابعة طلباتكم بكل شفافية</p>
+        <p>مكتب النائب | نعمل من أجلكم.. لتوصيل صوتكم ومتابعة طلباتكم بكل شفافية</p>
     </header>
 
     <section class="main-actions">
         <a href="apply.html" class="card">
             <i class="fas fa-file-signature"></i>
             <h3>تقديم طلب جديد</h3>
-            <p>سجل طلبك أو شكواك الآن</p>
+            <p>سجل طلبك أو شكواك الآن وسنقوم بمراجعتها فوراً</p>
         </a>
 
         <a href="track.html" class="card">
             <i class="fas fa-search-location"></i>
             <h3>متابعة طلب سابق</h3>
-            <p>استعلم عن حالة طلبك برقمك القومي</p>
+            <p>استعلم عن حالة طلبك ومدى الإنجاز باستخدام الرقم القومي</p>
         </a>
     </section>
 
