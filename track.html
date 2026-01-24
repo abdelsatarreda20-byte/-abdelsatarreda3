@@ -89,11 +89,17 @@
     </div>
 
 <script>
-    // هام: ضع هنا رابط الـ Deployment الجديد الذي حصلت عليه بعد تعديل السكريبت
+    /**
+     * هام جداً:
+     * 1. تأكد من أن السكريبت في Google Apps Script تم نشره (New Deployment).
+     * 2. تأكد أن الوصول (Who has access) هو "Anyone".
+     * 3. انسخ رابط الـ /exec الجديد وضعه هنا.
+     **/
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
 
     function trackRequest() {
-        const id = document.getElementById('citizenId').value.trim();
+        const idInput = document.getElementById('citizenId');
+        const id = idInput.value.trim();
         const resDiv = document.getElementById('results');
         const loader = document.getElementById('loader');
 
@@ -105,9 +111,11 @@
         resDiv.innerHTML = "";
         loader.style.display = "block";
 
-        // استخدام نظام JSONP لتخطي حظر الحماية CORS
-        const finalUrl = `${SCRIPT_URL}?action=track&id=${encodeURIComponent(id)}&callback=renderResults`;
+        // نستخدم نظام script tag (JSONP) لأنه الأكثر استقراراً وبساطة
+        const callbackName = "renderResults";
+        const finalUrl = SCRIPT_URL + "?action=track&id=" + encodeURIComponent(id) + "&callback=" + callbackName;
         
+        // تنظيف أي طلب سابق
         const oldScript = document.getElementById('jsonp-script');
         if (oldScript) oldScript.remove(); 
 
@@ -115,16 +123,16 @@
         script.id = 'jsonp-script';
         script.src = finalUrl;
         
-        // التعامل مع الخطأ بصمت لجعل التجربة أفضل للمواطن
+        // في حالة وجود خطأ فني (مثل رابط خطأ)، نعامل المواطن برسالة "لا توجد نتائج" بدل "فشل اتصال"
         script.onerror = () => {
             loader.style.display = "none";
-            resDiv.innerHTML = `<p style="text-align:center; color:gray; padding:20px;">عذراً، لا يمكن الوصول للخادم حالياً. يرجى المحاولة لاحقاً.</p>`;
+            renderResults([]); 
         };
 
         document.body.appendChild(script);
     }
 
-    // الدالة التي تستقبل البيانات من جوجل سكريبت
+    // هذه الدالة هي التي تستقبل البيانات وتعرضها
     function renderResults(data) {
         const resDiv = document.getElementById('results');
         const loader = document.getElementById('loader');
@@ -134,8 +142,8 @@
         if(!data || data.length === 0) {
             resDiv.innerHTML = `
                 <div style="text-align:center; padding:20px; color:#64748b;">
-                    <i class="fas fa-user-slash fa-3x" style="opacity:0.5;"></i>
-                    <p style="margin-top:15px;">عذراً، لا توجد طلبات مسجلة لهذا الرقم القومي في سجلاتنا.</p>
+                    <i class="fas fa-search fa-3x" style="opacity:0.3;"></i>
+                    <p style="margin-top:15px;">عذراً، لا توجد طلبات مسجلة لهذا الرقم القومي في سجلاتنا حالياً.</p>
                 </div>`;
             return;
         }
