@@ -23,7 +23,7 @@
         .star { color: #ffcc00; font-size: 14px; margin-right: 5px; animation: flash 1.5s infinite; }
         @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        .btn-rest { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-rest { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .btn-rest.active { background: var(--green); }
         .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 5px 12px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
         .btn-action:hover { background: var(--gold); color: white; }
@@ -32,9 +32,7 @@
             padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; 
             display: inline-block; max-width: 200px; line-height: 1.4;
         }
-        /* لون افتراضي للنصوص الحرة */
         .status-msg { background: rgba(197,160,89,0.1); color: var(--gold); border: 1px solid rgba(197,160,89,0.3); }
-        /* لون قيد المراجعة */
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
 
         .admin-stamp { font-size: 11px; color: #888; font-family: 'Courier New', monospace; font-weight: bold; }
@@ -88,6 +86,7 @@
         loadData();
     };
 
+    // فحص الحالة وتحديث نص الزرار بكلماتك الجديدة
     function checkStatus() {
         fetch(`${SCRIPT_URL}?action=checkStatus`).then(r => r.json()).then(data => {
             const btn = document.getElementById('restBtn');
@@ -96,12 +95,31 @@
         });
     }
 
+    // الدالة المسؤولة عن تبديل حالة المنصة (تعديل الربط المنطقي)
     function toggleVacation() {
         const btn = document.getElementById('restBtn');
-        const newStatus = btn.innerText.includes("إيقاف") ? "closed" : "open";
-        let msg = newStatus === "closed" ? prompt("رسالة الإغلاق للمواطنين:") : "";
-        if(newStatus === "closed" && msg === null) return;
-        fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`).then(() => location.reload());
+        
+        // إذا كان المكتوب "شغل الشغل" يعني المنصة مغلقة حالياً ونريد فتحها (open)
+        // إذا كان المكتوب "ادي دماغك اجازه" يعني المنصة مفتوحة ونريد إغلاقها (closed)
+        const isCurrentlyClosed = btn.innerText.includes("شغل");
+        const newStatus = isCurrentlyClosed ? "open" : "closed";
+        
+        let msg = "";
+        if(newStatus === "closed") {
+            msg = prompt("رسالة الإغلاق للمواطنين (تظهر في صفحة التقديم):");
+            if(msg === null) return; // إلغاء العملية
+        }
+
+        // إرسال الأمر للسكريبت بلغة البرمجة الأساسية
+        fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert(newStatus === "open" ? "تم تشغيل الشغل بنجاح! 🚀" : "المنصة أخدت إجازة ☕");
+                checkStatus(); // تحديث الزرار فوراً دون إعادة تحميل كاملة
+            }
+        })
+        .catch(err => alert("حدث خطأ في الاتصال بالخادم"));
     }
 
     function loadData() {
@@ -126,10 +144,7 @@
                 const adminStamp = row[10] || '---';
                 const rowIndex = index + 2;
 
-                // إذا كانت الحالة غير "قيد المراجعة" نعتبرها طلب تم الرد عليه
                 if(status !== "قيد المراجعة") done++; else pending++;
-                
-                // تحديد شكل الحالة (لو قيد مراجعة تأخذ لون أزرق، لو نص حر تأخذ لون ذهبي)
                 const statusClass = status === "قيد المراجعة" ? "status-new" : "status-msg";
 
                 tbody.innerHTML += `<tr>
@@ -156,24 +171,15 @@
         });
     }
 
-    // الدالة المعدلة حسب طلبك: تطلب نصاً واحداً وتمسح الحالة القديمة
     function updateDecision(rowIndex) {
-        const userMsg = prompt("اكتب الرد الرسمي للمواطن أو حالة الطلب الجديدة:\n(سيتم استبدال 'قيد المراجعة' بهذا النص)");
-        
-        // إذا ضغط إلغاء أو ترك الخانة فارغة، لا تفعل شيئاً (يظل قيد المراجعة)
-        if (userMsg === null || userMsg.trim() === "") {
-            return; 
-        }
+        const userMsg = prompt("اكتب الرد الرسمي للمواطن أو حالة الطلب الجديدة:");
+        if (userMsg === null || userMsg.trim() === "") return; 
 
-        // إرسال النص للسكريبت
         fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(userMsg)}&adminName=${encodeURIComponent(adminName)}`)
         .then(res => res.json())
         .then(data => {
-            if(data.success) { 
-                loadData(); // إعادة تحميل البيانات لرؤية الرد الجديد
-            } else {
-                alert("فشل تحديث البيانات، حاول مرة أخرى.");
-            }
+            if(data.success) { loadData(); } 
+            else { alert("فشل تحديث البيانات"); }
         })
         .catch(err => alert("خطأ في الاتصال بالخادم"));
     }
