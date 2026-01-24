@@ -89,7 +89,7 @@
     </div>
 
 <script>
-    // الرابط الخاص بك (تأكد من تحديثه لأحدث Deployment)
+    // هام: ضع هنا رابط الـ Deployment الجديد الذي حصلت عليه بعد تعديل السكريبت
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUXcEoNYbit43yl25F8qwJUXMnELDlXx-OwN_q86gotnWWRtR2mUDhhdU92Ypy1wqZtw/exec";
 
     function trackRequest() {
@@ -106,26 +106,25 @@
         loader.style.display = "block";
 
         // استخدام نظام JSONP لتخطي حظر الحماية CORS
-        // نقوم بإنشاء عنصر Script وطلبه بدلاً من Fetch
         const finalUrl = `${SCRIPT_URL}?action=track&id=${encodeURIComponent(id)}&callback=renderResults`;
         
         const oldScript = document.getElementById('jsonp-script');
-        if (oldScript) oldScript.remove(); // مسح أي طلب سابق
+        if (oldScript) oldScript.remove(); 
 
         const script = document.createElement('script');
         script.id = 'jsonp-script';
         script.src = finalUrl;
         
-        // في حالة فشل التحميل تماماً
+        // التعامل مع الخطأ بصمت لجعل التجربة أفضل للمواطن
         script.onerror = () => {
             loader.style.display = "none";
-            alert("فشل الاتصال بالخادم، تأكد من رابط السكريبت");
+            resDiv.innerHTML = `<p style="text-align:center; color:gray; padding:20px;">عذراً، لا يمكن الوصول للخادم حالياً. يرجى المحاولة لاحقاً.</p>`;
         };
 
         document.body.appendChild(script);
     }
 
-    // هذه الدالة هي التي سيتم استدعاؤها من السكريبت فور نجاح العملية
+    // الدالة التي تستقبل البيانات من جوجل سكريبت
     function renderResults(data) {
         const resDiv = document.getElementById('results');
         const loader = document.getElementById('loader');
@@ -134,14 +133,14 @@
         
         if(!data || data.length === 0) {
             resDiv.innerHTML = `
-                <div style="text-align:center; padding:20px; color:#ef4444;">
-                    <i class="fas fa-user-slash fa-3x"></i>
+                <div style="text-align:center; padding:20px; color:#64748b;">
+                    <i class="fas fa-user-slash fa-3x" style="opacity:0.5;"></i>
                     <p style="margin-top:15px;">عذراً، لا توجد طلبات مسجلة لهذا الرقم القومي في سجلاتنا.</p>
                 </div>`;
             return;
         }
 
-        resDiv.innerHTML = `<h4 style="color:var(--primary); margin:20px 0 10px;">تم العثور على ${data.length} طلبات:</h4>`;
+        resDiv.innerHTML = `<h4 style="color:var(--primary); margin:20px 0 10px;">نتائج الاستعلام:</h4>`;
         
         data.forEach(req => {
             resDiv.innerHTML += `
@@ -153,7 +152,7 @@
                         ${req.summary || 'لم يتم إدراج ملخص'}
                     </div>
                     <div class="status-badge">
-                        <i class="fas fa-comment-dots"></i> الحالة: ${req.status}
+                        <i class="fas fa-info-circle"></i> الحالة والرد: ${req.status}
                     </div>
                 </div>
             `;
