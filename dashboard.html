@@ -91,7 +91,7 @@
     function checkStatus() {
         fetch(`${SCRIPT_URL}?action=checkStatus`).then(r => r.json()).then(data => {
             const btn = document.getElementById('restBtn');
-            btn.innerText = data.status === "closed" ? "فتح المنصة" : "إيقاف المنصة مؤقتاً";
+            btn.innerText = data.status === "closed" ? "شغل الشغل" : "ادي دماغك اجازه";
             btn.className = data.status === "closed" ? "btn-rest active" : "btn-rest";
         });
     }
