@@ -2,49 +2,69 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>غرفة العمليات | لوحة القيادة المطورة</title>
+    <title>غرفة العمليات | رجال الظل</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; --green: #22c55e; --blue: #3b82f6; }
+        :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; --green: #22c55e; --blue: #3b82f6; --red: #ef4444; }
         body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; }
+        /* الهيدر المطور */
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
+        /* زرار "ادي دماغك اجازه" الاحترافي */
+        .btn-rest { 
+            border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; 
+            font-weight: bold; font-family: inherit; transition: all 0.4s ease;
+            display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        /* حالة الإغلاق (المنصة تعمل) */
+        .btn-rest.status-working { 
+            background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid var(--green);
+            animation: pulse-green 2s infinite;
+        }
+        /* حالة الإجازة (المنصة مغلقة) */
+        .btn-rest.status-vacation { 
+            background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid var(--red);
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; }
         .stat-card h3 { margin: 0; color: var(--gold); font-size: 28px; }
-        .stat-card p { margin: 5px 0 0; opacity: 0.8; font-size: 12px; font-weight: bold; }
 
         .filter-section { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(197,160,89,0.1); }
-        select { background: var(--bg); color: var(--gold); border: 1px solid var(--gold); padding: 8px 15px; border-radius: 8px; font-family: inherit; cursor: pointer; }
+        select { background: #1a2236; color: white; border: 1px solid var(--gold); padding: 8px 15px; border-radius: 8px; cursor: pointer; }
         
-        /* زرار التحديث اليدوي الجديد */
-        .btn-refresh { background: var(--gold); color: var(--primary); border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .btn-refresh:hover { opacity: 0.8; }
-        .fa-spin-custom { animation: fa-spin 2s infinite linear; }
+        .btn-refresh { background: var(--gold); color: var(--primary); border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-refresh:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(197,160,89,0.3); }
 
         .table-container { background: var(--card); border-radius: 15px; overflow-x: auto; border: 1px solid rgba(197,160,89,0.2); }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         th { background: rgba(197,160,89,0.1); color: var(--gold); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
-        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 5px 12px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        .btn-action:hover { background: var(--gold); color: white; }
+        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 6px 15px; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: bold;}
+        .btn-action:hover { background: var(--gold); color: var(--primary); }
         
-        .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; display: inline-block; }
-        .status-msg { background: rgba(197,160,89,0.1); color: var(--gold); border: 1px solid rgba(197,160,89,0.3); }
+        .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; }
+        .status-msg { background: rgba(197,160,89,0.1); color: var(--gold); border: 1px solid var(--gold); }
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
-        .admin-stamp { font-size: 11px; color: #888; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h3><i class="fas fa-shield-alt"></i> غرفة عمليات مكتب النائب | رجال الظل</h3>
+    <h3 style="margin:0; display:flex; align-items:center; gap:10px;"><i class="fas fa-user-secret" style="color:var(--gold)"></i> غرفة عمليات رجال الظل</h3>
     <div style="display: flex; align-items: center; gap: 15px;">
-        <span id="welcomeMsg" style="font-size: 13px; color: var(--gold);"></span>
-        <button id="restBtn" onclick="toggleVacation()" class="btn-rest">تحميل الحالة...</button>
-        <button onclick="logout()" style="background:none; color:gray; border:none; cursor:pointer;"><i class="fas fa-power-off"></i></button>
+        <span id="welcomeMsg" style="font-size: 13px; color: var(--gold); font-weight: bold;"></span>
+        <button id="restBtn" onclick="toggleVacation()" class="btn-rest">
+            <i id="statusIcon" class="fas fa-spinner fa-spin"></i>
+            <span id="statusText">جاري التحقق...</span>
+        </button>
+        <button onclick="logout()" style="background:none; color:gray; border:none; cursor:pointer; font-size: 18px;"><i class="fas fa-power-off"></i></button>
     </div>
 </div>
 
@@ -56,31 +76,31 @@
 </div>
 
 <div class="filter-section">
-    <label><i class="fas fa-filter"></i> عرض:</label>
+    <label style="font-weight:bold;"><i class="fas fa-filter" style="color:var(--gold)"></i> تصفية العمليات:</label>
     <select id="statusFilter" onchange="renderTable()">
         <option value="all">كل الطلبات</option>
-        <option value="pending">بانتظار الرد</option>
-        <option value="done">تم الرد</option>
-        <option value="duplicates">مكررين</option>
+        <option value="pending">بانتظار الرد (جديد)</option>
+        <option value="done">تم إنجازها</option>
+        <option value="duplicates">تكرار البيانات</option>
     </select>
     
     <button class="btn-refresh" onclick="loadData()">
-        <i id="refreshIcon" class="fas fa-sync-alt"></i> تحديث البيانات
+        <i id="refreshIcon" class="fas fa-sync-alt"></i> تحديث فوري
     </button>
     
-    <small id="updateTimer" style="margin-right: auto; opacity: 0.5; font-size: 10px;">تحديث تلقائي كل 10 ثواني</small>
+    <small id="updateTimer" style="margin-right: auto; opacity: 0.6; font-size: 11px;">تحديث تلقائي كل 10 ثواني</small>
 </div>
 
 <div class="table-container">
     <table>
         <thead>
             <tr>
-                <th>التاريخ</th>
-                <th>المواطن</th>
-                <th>تفاصيل الطلب</th>
-                <th>المرفق</th>
-                <th>بواسطة</th>
-                <th>الحالة</th>
+                <th>التاريخ والوقت</th>
+                <th>بيان المواطن</th>
+                <th>تفاصيل العملية</th>
+                <th>المستندات</th>
+                <th>المسؤول</th>
+                <th>الحالة الحالية</th>
                 <th>الإجراء</th>
             </tr>
         </thead>
@@ -96,22 +116,50 @@
 
     window.onload = () => {
         if(!userSession) { window.location.href="admin.html"; return; }
-        document.getElementById('welcomeMsg').innerText = "مرحباً: " + adminName;
+        document.getElementById('welcomeMsg').innerText = "المسؤول: " + adminName;
         checkStatus(); 
         loadData();
-        // تحديث كل 10 ثواني
         setInterval(loadData, 10000);
     };
 
+    function checkStatus() {
+        fetch(`${SCRIPT_URL}?action=checkStatus`).then(r => r.json()).then(data => {
+            const btn = document.getElementById('restBtn');
+            const icon = document.getElementById('statusIcon');
+            const text = document.getElementById('statusText');
+            
+            if(data.status === "closed") {
+                btn.className = "btn-rest status-working";
+                icon.className = "fas fa-broadcast-tower";
+                text.innerText = "شغل الشغل";
+            } else {
+                btn.className = "btn-rest status-vacation";
+                icon.className = "fas fa-coffee";
+                text.innerText = "ادي دماغك اجازه";
+            }
+        });
+    }
+
+    function toggleVacation() {
+        const text = document.getElementById('statusText').innerText;
+        const newStatus = text.includes("شغل") ? "open" : "closed";
+        let msg = "";
+        if(newStatus === "closed") {
+            msg = prompt("رسالة الإغلاق الموجهة للمواطنين:");
+            if(msg === null) return;
+        }
+        fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`)
+        .then(res => res.json()).then(data => { if(data.success) checkStatus(); });
+    }
+
     function loadData() {
         const icon = document.getElementById('refreshIcon');
-        icon.classList.add('fa-spin'); // حركة دوران عند التحديث
-        
+        icon.classList.add('fa-spin');
         fetch(`${SCRIPT_URL}?action=getRequests`).then(r => r.json()).then(data => {
             cachedData = data;
             renderTable();
             icon.classList.remove('fa-spin');
-            document.getElementById('updateTimer').innerText = "آخر تحديث: " + new Date().toLocaleTimeString('ar-EG');
+            document.getElementById('updateTimer').innerText = "آخر رصد: " + new Date().toLocaleTimeString('ar-EG');
         });
     }
 
@@ -134,7 +182,6 @@
             const rowIndex = index + 2; 
 
             if(status !== "قيد المراجعة") done++; else pending++;
-
             if (filter === 'pending' && status !== "قيد المراجعة") return;
             if (filter === 'done' && status === "قيد المراجعة") return;
             if (filter === 'duplicates' && !isDuplicate) return;
@@ -143,12 +190,12 @@
 
             tbody.innerHTML += `<tr>
                 <td><small>${row[0]}</small></td>
-                <td><b>${row[2]}</b><br><small>${id}</small></td>
-                <td style="text-align:right;">${row[5] || ''}</td>
-                <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-image"></i></a></td>
-                <td class="admin-stamp">${row[10] || '---'}</td>
+                <td><b>${row[2]}</b><br><small style="color:var(--gold)">${id}</small></td>
+                <td style="text-align:right; font-size:12px;">${row[5] || ''}</td>
+                <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-file-invoice fa-lg"></i></a></td>
+                <td style="font-size:11px; color:#aaa;">${row[10] || '---'}</td>
                 <td><span class="status-badge ${statusClass}">${status}</span></td>
-                <td><button class="btn-action" onclick="updateDecision(${rowIndex})">رد</button></td>
+                <td><button class="btn-action" onclick="updateDecision(${rowIndex})"><i class="fas fa-pen-fancy"></i> رد</button></td>
             </tr>`;
         });
 
@@ -158,10 +205,13 @@
         document.getElementById('pendingReq').innerText = pending;
     }
 
-    // نفس دوال checkStatus و toggleVacation و updateDecision و logout
-    function checkStatus() { fetch(`${SCRIPT_URL}?action=checkStatus`).then(r => r.json()).then(data => { const btn = document.getElementById('restBtn'); btn.innerText = data.status === "closed" ? "شغل الشغل" : "ادي دماغك اجازه"; btn.className = data.status === "closed" ? "btn-rest active" : "btn-rest"; }); }
-    function toggleVacation() { const btn = document.getElementById('restBtn'); const isCurrentlyClosed = btn.innerText.includes("شغل"); const newStatus = isCurrentlyClosed ? "open" : "closed"; let msg = ""; if(newStatus === "closed") { msg = prompt("رسالة الإغلاق:"); if(msg === null) return; } fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`).then(res => res.json()).then(data => { if(data.success) { checkStatus(); } }); }
-    function updateDecision(rowIndex) { const userMsg = prompt("اكتب الرد الرسمي:"); if (!userMsg) return; fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(userMsg)}&adminName=${encodeURIComponent(adminName)}`).then(res => res.json()).then(data => { if(data.success) { loadData(); } }); }
+    function updateDecision(rowIndex) {
+        const userMsg = prompt("أدخل الرد الرسمي لهذا الملف:");
+        if (!userMsg) return; 
+        fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(userMsg)}&adminName=${encodeURIComponent(adminName)}`)
+        .then(res => res.json()).then(data => { if(data.success) loadData(); });
+    }
+
     function logout() { sessionStorage.clear(); window.location.href="admin.html"; }
 </script>
 </body>
