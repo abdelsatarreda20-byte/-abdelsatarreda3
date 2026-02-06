@@ -6,28 +6,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; --green: #22c55e; --blue: #3b82f6; --red: #ef4444; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; overflow-x: hidden; }
         
-        /* الهيدر المطور */
-        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* رسالة الترحيب الرهيبة */
+        #welcomeOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 10, 20, 0.98); z-index: 10000;
+            display: flex; justify-content: center; align-items: center; text-align: center;
+            transition: opacity 1s ease;
+        }
+        .welcome-content { border: 2px solid var(--gold); padding: 50px; border-radius: 30px; background: var(--card); box-shadow: 0 0 50px rgba(197, 160, 89, 0.3); }
+        .welcome-content i { font-size: 80px; color: var(--gold); margin-bottom: 20px; animation: glow 1.5s infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 10px var(--gold); transform: scale(1); } to { text-shadow: 0 0 30px var(--gold); transform: scale(1.1); } }
+
+        /* هيدر رجال الظل المزخرف */
+        .shadow-header-box {
+            text-align: center; padding: 30px; background: linear-gradient(145deg, #0b1c4d, #050a14);
+            border: 2px solid var(--gold); border-radius: 20px; margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
+        }
+        .shadow-logo-text {
+            font-size: 45px; font-family: 'Amiri', serif; color: var(--gold);
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.6), 2px 2px #000;
+            margin: 10px 0; display: block;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; }
         
-        /* زرار "ادي دماغك اجازه" الاحترافي */
-        .btn-rest { 
-            border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; 
-            font-weight: bold; font-family: inherit; transition: all 0.4s ease;
-            display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-        /* حالة الإغلاق (المنصة تعمل) */
-        .btn-rest.status-working { 
-            background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid var(--green);
-            animation: pulse-green 2s infinite;
-        }
-        /* حالة الإجازة (المنصة مغلقة) */
-        .btn-rest.status-vacation { 
-            background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid var(--red);
-            animation: pulse-red 2s infinite;
-        }
+        .btn-rest { border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.4s; display: flex; align-items: center; gap: 10px; }
+        .btn-rest.status-working { background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid var(--green); animation: pulse-green 2s infinite; }
+        .btn-rest.status-vacation { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid var(--red); animation: pulse-red 2s infinite; }
+        
         @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
@@ -35,72 +44,101 @@
         .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; }
         .stat-card h3 { margin: 0; color: var(--gold); font-size: 28px; }
 
-        .filter-section { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(197,160,89,0.1); }
-        select { background: #1a2236; color: white; border: 1px solid var(--gold); padding: 8px 15px; border-radius: 8px; cursor: pointer; }
-        
-        .btn-refresh { background: var(--gold); color: var(--primary); border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .btn-refresh:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(197,160,89,0.3); }
+        /* قسم البحث والفلترة المطور */
+        .filter-section { 
+            background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; 
+            display: flex; align-items: center; gap: 20px; border: 1px solid rgba(197,160,89,0.1); flex-wrap: wrap;
+        }
+        .search-box { flex: 2; position: relative; min-width: 300px; }
+        .search-box input { 
+            width: 100%; background: #1a2236; color: white; border: 1px solid var(--gold); 
+            padding: 12px 40px 12px 15px; border-radius: 10px; outline: none; font-size: 15px;
+        }
+        .search-box i { position: absolute; right: 15px; top: 15px; color: var(--gold); }
 
         .table-container { background: var(--card); border-radius: 15px; overflow-x: auto; border: 1px solid rgba(197,160,89,0.2); }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
         th { background: rgba(197,160,89,0.1); color: var(--gold); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
         td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 6px 15px; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: bold;}
-        .btn-action:hover { background: var(--gold); color: var(--primary); }
-        
+        .district-badge { background: rgba(197, 160, 89, 0.1); color: var(--gold); padding: 5px 12px; border-radius: 6px; border: 1px solid var(--gold); font-size: 12px; font-weight: bold; }
         .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; }
-        .status-msg { background: rgba(197,160,89,0.1); color: var(--gold); border: 1px solid var(--gold); }
-        .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+        .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); border: 1px solid var(--blue); }
+        .status-done { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid var(--green); }
+        
+        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .btn-action:hover { background: var(--gold); color: var(--primary); transform: scale(1.05); }
     </style>
 </head>
 <body>
 
+<div id="welcomeOverlay">
+    <div class="welcome-content">
+        <i class="fas fa-user-shield"></i>
+        <h1 class="shadow-logo-text" style="font-size: 55px;">رِجـال الـظِـل</h1>
+        <p style="font-size: 20px; color: #ccc; max-width: 600px; line-height: 1.8;">
+            "مرحباً بك يا بطل من رجال الظل.. الأرض تبتسم بجهودكم، والنائب يثق في أمانتكم. لنبدأ المهمة!"
+        </p>
+    </div>
+</div>
+
+<div class="shadow-header-box">
+    <i class="fas fa-crown" style="color: var(--gold); font-size: 25px;"></i>
+    <span class="shadow-logo-text">رِجـال الـظِـل</span>
+    <small style="letter-spacing: 4px; color: #777; font-weight: bold;">غرفة العمليات المركزية</small>
+</div>
+
 <div class="header">
-    <h3 style="margin:0; display:flex; align-items:center; gap:10px;"><i class="fas fa-user-secret" style="color:var(--gold)"></i> غرفة عمليات رجال الظل</h3>
+    <h3 style="margin:0; display:flex; align-items:center; gap:10px;"><i class="fas fa-database"></i> قاعدة بيانات الطلبات</h3>
     <div style="display: flex; align-items: center; gap: 15px;">
-        <span id="welcomeMsg" style="font-size: 13px; color: var(--gold); font-weight: bold;"></span>
+        <span id="welcomeMsg" style="font-size: 14px; color: var(--gold); border-left: 1px solid #333; padding-left: 15px;"></span>
         <button id="restBtn" onclick="toggleVacation()" class="btn-rest">
-            <i id="statusIcon" class="fas fa-spinner fa-spin"></i>
-            <span id="statusText">جاري التحقق...</span>
+            <i id="statusIcon" class="fas fa-circle-notch fa-spin"></i>
+            <span id="statusText">فحص النظام...</span>
         </button>
-        <button onclick="logout()" style="background:none; color:gray; border:none; cursor:pointer; font-size: 18px;"><i class="fas fa-power-off"></i></button>
+        <button onclick="logout()" style="background:none; color:#555; border:none; cursor:pointer; font-size: 20px;"><i class="fas fa-power-off"></i></button>
     </div>
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>بانتظار الرد</p> </div>
+    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>طلبات جديدة</p> </div>
     <div class="stat-card" style="border-right-color: var(--green);"> <h3 id="doneReq">0</h3> <p>تم الرد عليها</p> </div>
-    <div class="stat-card" style="border-right-color: #ffcc00;"> <h3 id="duplicateCount">0</h3> <p>مواطنين مكررين</p> </div>
-    <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الطلبات</p> </div>
+    <div class="stat-card" style="border-right-color: #ffcc00;"> <h3 id="duplicateCount">0</h3> <p>حالات مكررة</p> </div>
+    <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الوارد</p> </div>
 </div>
 
 <div class="filter-section">
-    <label style="font-weight:bold;"><i class="fas fa-filter" style="color:var(--gold)"></i> تصفية العمليات:</label>
-    <select id="statusFilter" onchange="renderTable()">
-        <option value="all">كل الطلبات</option>
-        <option value="pending">بانتظار الرد (جديد)</option>
-        <option value="done">تم إنجازها</option>
-        <option value="duplicates">تكرار البيانات</option>
-    </select>
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="ابحث باسم المواطن أو الرقم القومي أو المنطقة...">
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label>الحالة:</label>
+        <select id="statusFilter" onchange="renderTable()" style="padding: 10px; border-radius: 8px;">
+            <option value="all">الكل</option>
+            <option value="pending">قيد المراجعة</option>
+            <option value="done">تم الرد</option>
+            <option value="duplicates">المكرر</option>
+        </select>
+    </div>
     
-    <button class="btn-refresh" onclick="loadData()">
-        <i id="refreshIcon" class="fas fa-sync-alt"></i> تحديث فوري
+    <button class="btn-action" onclick="loadData()" style="background: var(--gold); color: var(--primary);">
+        <i id="refreshIcon" class="fas fa-sync-alt"></i> تحديث البيانات
     </button>
-    
-    <small id="updateTimer" style="margin-right: auto; opacity: 0.6; font-size: 11px;">تحديث تلقائي كل 10 ثواني</small>
 </div>
 
 <div class="table-container">
     <table>
         <thead>
             <tr>
-                <th>التاريخ والوقت</th>
-                <th>بيان المواطن</th>
-                <th>تفاصيل العملية</th>
-                <th>المستندات</th>
+                <th>التاريخ</th>
+                <th>المنطقة</th>
+                <th>المواطن</th>
+                <th>مخلص الطلب</th>
+                <th>المرفقات</th>
                 <th>المسؤول</th>
-                <th>الحالة الحالية</th>
+                <th>الحالة</th>
                 <th>الإجراء</th>
             </tr>
         </thead>
@@ -109,110 +147,4 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
-    const userSession = JSON.parse(sessionStorage.getItem('shadowUser'));
-    const adminName = userSession ? userSession.name : "مسؤول";
-    let cachedData = [];
-
-    window.onload = () => {
-        if(!userSession) { window.location.href="admin.html"; return; }
-        document.getElementById('welcomeMsg').innerText = "المسؤول: " + adminName;
-        checkStatus(); 
-        loadData();
-        setInterval(loadData, 10000);
-    };
-
-    function checkStatus() {
-        fetch(`${SCRIPT_URL}?action=checkStatus`).then(r => r.json()).then(data => {
-            const btn = document.getElementById('restBtn');
-            const icon = document.getElementById('statusIcon');
-            const text = document.getElementById('statusText');
-            
-            if(data.status === "closed") {
-                btn.className = "btn-rest status-working";
-                icon.className = "fas fa-broadcast-tower";
-                text.innerText = "شغل الشغل";
-            } else {
-                btn.className = "btn-rest status-vacation";
-                icon.className = "fas fa-coffee";
-                text.innerText = "ادي دماغك اجازه";
-            }
-        });
-    }
-
-    function toggleVacation() {
-        const text = document.getElementById('statusText').innerText;
-        const newStatus = text.includes("شغل") ? "open" : "closed";
-        let msg = "";
-        if(newStatus === "closed") {
-            msg = prompt("رسالة الإغلاق الموجهة للمواطنين:");
-            if(msg === null) return;
-        }
-        fetch(`${SCRIPT_URL}?action=toggleSystem&status=${newStatus}&msg=${encodeURIComponent(msg)}`)
-        .then(res => res.json()).then(data => { if(data.success) checkStatus(); });
-    }
-
-    function loadData() {
-        const icon = document.getElementById('refreshIcon');
-        icon.classList.add('fa-spin');
-        fetch(`${SCRIPT_URL}?action=getRequests`).then(r => r.json()).then(data => {
-            cachedData = data;
-            renderTable();
-            icon.classList.remove('fa-spin');
-            document.getElementById('updateTimer').innerText = "آخر رصد: " + new Date().toLocaleTimeString('ar-EG');
-        });
-    }
-
-    function renderTable() {
-        const tbody = document.getElementById('tableBody');
-        const filter = document.getElementById('statusFilter').value;
-        tbody.innerHTML = '';
-        
-        let done = 0, pending = 0;
-        const idCounts = {};
-        cachedData.forEach(row => { 
-            const id = row[1].toString().trim();
-            idCounts[id] = (idCounts[id] || 0) + 1; 
-        });
-
-        cachedData.forEach((row, index) => {
-            const id = row[1].toString().trim();
-            const status = row[9] || 'قيد المراجعة';
-            const isDuplicate = idCounts[id] > 1;
-            const rowIndex = index + 2; 
-
-            if(status !== "قيد المراجعة") done++; else pending++;
-            if (filter === 'pending' && status !== "قيد المراجعة") return;
-            if (filter === 'done' && status === "قيد المراجعة") return;
-            if (filter === 'duplicates' && !isDuplicate) return;
-
-            const statusClass = status === "قيد المراجعة" ? "status-new" : "status-msg";
-
-            tbody.innerHTML += `<tr>
-                <td><small>${row[0]}</small></td>
-                <td><b>${row[2]}</b><br><small style="color:var(--gold)">${id}</small></td>
-                <td style="text-align:right; font-size:12px;">${row[5] || ''}</td>
-                <td><a href="${row[7]}" target="_blank" style="color:var(--gold)"><i class="fas fa-file-invoice fa-lg"></i></a></td>
-                <td style="font-size:11px; color:#aaa;">${row[10] || '---'}</td>
-                <td><span class="status-badge ${statusClass}">${status}</span></td>
-                <td><button class="btn-action" onclick="updateDecision(${rowIndex})"><i class="fas fa-pen-fancy"></i> رد</button></td>
-            </tr>`;
-        });
-
-        document.getElementById('totalReq').innerText = cachedData.length;
-        document.getElementById('duplicateCount').innerText = Object.values(idCounts).filter(v => v > 1).length;
-        document.getElementById('doneReq').innerText = done;
-        document.getElementById('pendingReq').innerText = pending;
-    }
-
-    function updateDecision(rowIndex) {
-        const userMsg = prompt("أدخل الرد الرسمي لهذا الملف:");
-        if (!userMsg) return; 
-        fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${rowIndex}&status=${encodeURIComponent(userMsg)}&adminName=${encodeURIComponent(adminName)}`)
-        .then(res => res.json()).then(data => { if(data.success) loadData(); });
-    }
-
-    function logout() { sessionStorage.clear(); window.location.href="admin.html"; }
-</script>
-</body>
-</html>
+    const SCRIPT_URL = "
