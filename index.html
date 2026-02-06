@@ -14,13 +14,12 @@
             margin: 0; 
         }
 
-        /* تعديل الهيدر ليحتوي على صورة قبة مجلس الشعب */
         header { 
             background: linear-gradient(rgba(15, 28, 77, 0.85), rgba(15, 28, 77, 0.85)), 
                         url('https://i.ibb.co/fzD9Z1DK/19-2025-638940861396941032-694.jpg'); 
             background-size: cover; 
             background-position: center;
-            background-attachment: fixed; /* بيخلي الصورة ثابتة والصفحة بتتحرك فوقها */
+            background-attachment: fixed; 
             padding: 80px 20px 120px; 
             text-align: center; 
             border-bottom: 5px solid var(--gold); 
@@ -61,6 +60,17 @@
         .card:hover { transform: translateY(-10px); border-top-color: var(--gold); }
         .card i { font-size: 45px; color: var(--gold); margin-bottom: 15px; }
 
+        /* ستايل الكارت لما يكون مقفول */
+        .card-closed { 
+            background: #e2e8f0 !important; 
+            opacity: 0.9; 
+            cursor: not-allowed !important; 
+            border-top-color: #94a3b8 !important;
+        }
+        .card-closed i { color: #64748b !important; }
+        .card-closed h3 { color: #475569 !important; font-size: 16px !important; }
+        .card-closed p { color: #64748b !important; font-weight: bold; }
+
         .volunteer-login { 
             position: absolute; top: 20px; left: 20px; 
             color: white; font-size: 24px; text-decoration: none; 
@@ -81,11 +91,12 @@
     </header>
 
     <section class="main-actions">
-        <a href="apply.html" class="card" id="applyBtn">
-            <i class="fas fa-file-signature"></i>
-            <h3>تقديم طلب جديد</h3>
-            <p>سجل طلبك أو شكواك أو مقترحك الآن للمتابعة الفورية</p>
+        <a href="apply.html" class="card" id="applyCard">
+            <i class="fas fa-file-signature" id="applyIcon"></i>
+            <h3 id="applyTitle">تقديم طلب جديد</h3>
+            <p id="applyDesc">سجل طلبك أو شكواك أو مقترحك الآن للمتابعة الفورية</p>
         </a>
+
         <a href="track.html" class="card">
             <i class="fas fa-search-plus"></i>
             <h3>متابعة طلب سابق</h3>
@@ -93,5 +104,36 @@
         </a>
     </section>
 
-    </body>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
+
+        window.onload = function() {
+            fetch(`${SCRIPT_URL}?action=checkStatus`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "closed") {
+                    const card = document.getElementById('applyCard');
+                    const icon = document.getElementById('applyIcon');
+                    const title = document.getElementById('applyTitle');
+                    const desc = document.getElementById('applyDesc');
+
+                    // تغيير شكل الكارت وحالته
+                    card.classList.add('card-closed');
+                    card.href = "javascript:void(0)"; // تعطيل اللينك
+                    icon.className = "fas fa-user-lock"; // تغيير الأيقونة لقفل
+                    title.innerText = "التقديم متوقف حالياً";
+                    desc.innerText = data.msg; // عرض رسالتك اللي كتبتها في الداشبورد
+                    
+                    // منع الضغط
+                    card.onclick = function(e) {
+                        e.preventDefault();
+                        return false;
+                    };
+                }
+            })
+            .catch(err => console.error("Error checking status"));
+        };
+    </script>
+
+</body>
 </html>
