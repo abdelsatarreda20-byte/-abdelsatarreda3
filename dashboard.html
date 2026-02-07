@@ -7,99 +7,56 @@
     <style>
         :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; --green: #22c55e; --blue: #3b82f6; --red: #ef4444; }
         body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; overflow-x: hidden; }
-        
-        #welcomeOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 10, 20, 0.98); z-index: 10000;
-            display: flex; justify-content: center; align-items: center; text-align: center;
-            transition: opacity 1s ease; cursor: pointer;
-        }
+        #welcomeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 10, 20, 0.98); z-index: 10000; display: flex; justify-content: center; align-items: center; text-align: center; transition: opacity 1s ease; cursor: pointer; }
         .welcome-content { border: 2px solid var(--gold); padding: 50px; border-radius: 30px; background: var(--card); box-shadow: 0 0 50px rgba(197, 160, 89, 0.3); }
-        .welcome-content i { font-size: 80px; color: var(--gold); margin-bottom: 20px; animation: glow 1.5s infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 10px var(--gold); transform: scale(1); } to { text-shadow: 0 0 30px var(--gold); transform: scale(1.1); } }
-
-        .shadow-header-box {
-            text-align: center; padding: 30px; background: linear-gradient(145deg, #0b1c4d, #050a14);
-            border: 2px solid var(--gold); border-radius: 20px; margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
-        }
-        .shadow-logo-text {
-            font-size: 45px; font-family: 'Amiri', serif; color: var(--gold);
-            text-shadow: 0 0 10px rgba(197, 160, 89, 0.6), 2px 2px #000;
-            margin: 10px 0; display: block;
-        }
-
+        .shadow-header-box { text-align: center; padding: 30px; background: linear-gradient(145deg, #0b1c4d, #050a14); border: 2px solid var(--gold); border-radius: 20px; margin-bottom: 30px; }
+        .shadow-logo-text { font-size: 45px; font-family: 'Amiri', serif; color: var(--gold); text-shadow: 0 0 10px rgba(197, 160, 89, 0.6); margin: 10px 0; display: block; }
         .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; }
-        
-        .btn-rest { border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.4s; display: flex; align-items: center; gap: 10px; }
-        .btn-rest.status-working { background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid var(--green); }
-        .btn-rest.status-vacation { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid var(--red); }
-
+        .btn-rest { border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; background: rgba(34, 197, 94, 0.1); color: var(--green); border: 1px solid var(--green); }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; }
         .stat-card h3 { margin: 0; color: var(--gold); font-size: 28px; }
-
-        .filter-section { 
-            background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; 
-            display: flex; align-items: center; gap: 20px; border: 1px solid rgba(197,160,89,0.1); flex-wrap: wrap;
-        }
-        .search-box { flex: 2; position: relative; min-width: 300px; }
-        .search-box input { 
-            width: 100%; background: #1a2236; color: white; border: 1px solid var(--gold); 
-            padding: 12px 40px 12px 15px; border-radius: 10px; outline: none; font-size: 15px;
-        }
-        .search-box i { position: absolute; right: 15px; top: 15px; color: var(--gold); }
-
+        .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 20px; border: 1px solid rgba(197,160,89,0.1); }
+        .search-box { flex: 2; position: relative; }
+        .search-box input { width: 100%; background: #1a2236; color: white; border: 1px solid var(--gold); padding: 12px; border-radius: 10px; outline: none; }
         .table-container { background: var(--card); border-radius: 15px; overflow-x: auto; border: 1px solid rgba(197,160,89,0.2); }
-        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-        th { background: rgba(197, 160, 89, 0.1); color: var(--gold); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th { background: rgba(197, 160, 89, 0.1); color: var(--gold); padding: 15px; border-bottom: 2px solid var(--gold); }
         td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        
         .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; }
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); border: 1px solid var(--blue); }
         .status-done { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid var(--green); }
-        
-        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold; }
-        .btn-action:hover { background: var(--gold); color: var(--primary); transform: scale(1.05); }
+        .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 18px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="welcomeOverlay" onclick="this.style.opacity='0'; setTimeout(()=>this.style.display='none', 1000);">
     <div class="welcome-content">
-        <i class="fas fa-user-shield"></i>
-        <h1 class="shadow-logo-text" style="font-size: 55px;">رِجـال الـظِـل</h1>
-        <p style="font-size: 24px; color: var(--gold); font-weight: bold; margin-bottom: 10px;">
-            مرحباً بك يا <span id="adminNameDisplay">بطل</span>
-        </p>
-        <p style="font-size: 18px; color: #ccc;">"الأرض تبتسم بجهودكم، والنائب يثق في أمانتكم. لنبدأ المهمة!"</p>
+        <i class="fas fa-user-shield" style="font-size: 80px; color: var(--gold);"></i>
+        <h1 class="shadow-logo-text">رِجـال الـظِـل</h1>
+        <p>مرحباً بك يا <span id="adminNameDisplay">بطل</span></p>
     </div>
 </div>
 
 <div class="shadow-header-box">
     <span class="shadow-logo-text">رِجـال الـظِـل</span>
-    <small style="letter-spacing: 4px; color: #777; font-weight: bold;">غرفة العمليات المركزية</small>
+    <small>غرفة العمليات المركزية</small>
 </div>
 
 <div class="header">
-    <h3><i class="fas fa-database"></i> قاعدة بيانات الطلبات</h3>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <button id="restBtn" class="btn-rest status-working">
-            <i class="fas fa-check-circle"></i> <span id="statusText">النظام متصل</span>
-        </button>
-        <button onclick="logout()" style="background:none; color:#555; border:none; cursor:pointer;"><i class="fas fa-power-off"></i></button>
-    </div>
+    <h3>قاعدة بيانات الطلبات</h3>
+    <button id="restBtn" class="btn-rest">النظام متصل</button>
 </div>
 
 <div class="stats-grid">
     <div class="stat-card"> <h3 id="pendingReq">0</h3> <p>طلبات جديدة</p> </div>
-    <div class="stat-card"> <h3 id="doneReq">0</h3> <p>تم الرد عليها</p> </div>
-    <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الوارد</p> </div>
+    <div class="stat-card"> <h3 id="doneReq">0</h3> <p>تم الرد</p> </div>
+    <div class="stat-card"> <h3 id="totalReq">0</h3> <p>الإجمالي</p> </div>
 </div>
 
 <div class="filter-section">
     <div class="search-box">
-        <i class="fas fa-search"></i>
         <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="ابحث باسم المواطن...">
     </div>
     <button class="btn-action" onclick="loadData()">تحديث البيانات</button>
@@ -122,66 +79,59 @@
 </div>
 
 <script>
-    // 1. ضع رابط الـ Script URL الخاص بك هنا
-    const SCRIPT_URL = "أدخل_رابط_السكربت_هنا";
+    // هام جداً: ضع رابط الـ SCRIPT_URL هنا
+    const SCRIPT_URL = "ضع_رابط_السكربت_هنا"; 
     let allData = [];
 
-    // 2. تشغيل رسالة الترحيب والبيانات عند الفتح
     window.onload = function() {
-        const loggedAdmin = localStorage.getItem('loggedUser') || "يا بطل";
-        document.getElementById('adminNameDisplay').innerText = loggedAdmin;
-        
-        setTimeout(() => {
-            const overlay = document.getElementById('welcomeOverlay');
-            if(overlay) overlay.style.opacity = '0';
-            setTimeout(() => overlay.style.display = 'none', 1000);
-        }, 3000);
-
+        document.getElementById('adminNameDisplay').innerText = localStorage.getItem('loggedUser') || "بطل";
         loadData();
     };
 
-    // 3. دالة جلب البيانات من السيرفر
     function loadData() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '<tr><td colspan="6">جاري جلب البيانات...</td></tr>';
+        
         fetch(`${SCRIPT_URL}?action=getData`)
         .then(res => res.json())
         .then(data => {
+            console.log("Data received:", data); // عشان تشوف البيانات في الـ Console
             allData = data;
             renderTable();
             updateStats();
+        })
+        .catch(err => {
+            tbody.innerHTML = '<tr><td colspan="6" style="color:red">خطأ في الاتصال بالسيرفر!</td></tr>';
         });
     }
 
-    // 4. دالة عرض البيانات في الجدول
     function renderTable() {
         const search = document.getElementById('searchInput').value.toLowerCase();
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
 
-        allData.filter(row => row.name.toLowerCase().includes(search))
-        .forEach(row => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${row.timestamp}</td>
-                <td>${row.district}</td>
-                <td><b>${row.name}</b></td>
-                <td><a href="${row.fileLink}" target="_blank">فتح الملف</a></td>
-                <td><span class="status-badge ${row.status === 'تم الرد' ? 'status-done' : 'status-new'}">${row.status}</span></td>
-                <td><button class="btn-action" onclick="alert('التفاصيل: ${row.summary}')">عرض</button></td>
-            `;
-            tbody.appendChild(tr);
+        // الكود هنا ذكي: لو ملقاش اسم العمود، بياخد الخانة بالترتيب
+        allData.forEach(row => {
+            const name = (row.name || row[2] || "").toString(); // العمود التالت غالباً الاسم
+            if (name.toLowerCase().includes(search)) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.timestamp || row[0] || ""}</td>
+                    <td>${row.district || row[1] || ""}</td>
+                    <td><b>${name}</b></td>
+                    <td><a href="${row.fileLink || row[4] || '#'}" target="_blank">فتح الملف</a></td>
+                    <td><span class="status-badge ${ (row.status || row[6]) === 'تم الرد' ? 'status-done' : 'status-new'}">${row.status || row[6] || 'جديد'}</span></td>
+                    <td><button class="btn-action" onclick="alert('ملخص: ' + (row.summary || row[5] || 'لا يوجد'))">عرض</button></td>
+                `;
+                tbody.appendChild(tr);
+            }
         });
     }
 
-    // 5. تحديث الأرقام العلوية
     function updateStats() {
         document.getElementById('totalReq').innerText = allData.length;
-        document.getElementById('pendingReq').innerText = allData.filter(r => r.status !== 'تم الرد').length;
-        document.getElementById('doneReq').innerText = allData.filter(r => r.status === 'تم الرد').length;
-    }
-
-    function logout() {
-        localStorage.removeItem('loggedUser');
-        window.location.href = 'login.html';
+        document.getElementById('pendingReq').innerText = allData.filter(r => (r.status || r[6]) !== 'تم الرد').length;
+        document.getElementById('doneReq').innerText = allData.filter(r => (r.status || r[6]) === 'تم الرد').length;
     }
 </script>
 </body>
