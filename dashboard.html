@@ -8,12 +8,12 @@
         :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; --green: #22c55e; --blue: #3b82f6; --red: #ef4444; }
         body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; overflow-x: hidden; }
         
-        /* رسالة الترحيب الرهيبة */
+        /* رسالة الترحيب الرهيبة - تم إضافة cursor pointer */
         #welcomeOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 10, 20, 0.98); z-index: 10000;
             display: flex; justify-content: center; align-items: center; text-align: center;
-            transition: opacity 1s ease;
+            transition: opacity 1s ease; cursor: pointer;
         }
         .welcome-content { border: 2px solid var(--gold); padding: 50px; border-radius: 30px; background: var(--card); box-shadow: 0 0 50px rgba(197, 160, 89, 0.3); }
         .welcome-content i { font-size: 80px; color: var(--gold); margin-bottom: 20px; animation: glow 1.5s infinite alternate; }
@@ -44,7 +44,6 @@
         .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; }
         .stat-card h3 { margin: 0; color: var(--gold); font-size: 28px; }
 
-        /* قسم البحث والفلترة المطور */
         .filter-section { 
             background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; 
             display: flex; align-items: center; gap: 20px; border: 1px solid rgba(197,160,89,0.1); flex-wrap: wrap;
@@ -72,12 +71,15 @@
 </head>
 <body>
 
-<div id="welcomeOverlay">
+<div id="welcomeOverlay" onclick="this.style.display='none'">
     <div class="welcome-content">
         <i class="fas fa-user-shield"></i>
         <h1 class="shadow-logo-text" style="font-size: 55px;">رِجـال الـظِـل</h1>
-        <p style="font-size: 20px; color: #ccc; max-width: 600px; line-height: 1.8;">
-            "مرحباً بك يا بطل من رجال الظل.. الأرض تبتسم بجهودكم، والنائب يثق في أمانتكم. لنبدأ المهمة!"
+        <p style="font-size: 24px; color: var(--gold); font-weight: bold; margin-bottom: 10px;">
+            مرحباً بك يا <span id="adminNameDisplay">بطل</span>
+        </p>
+        <p style="font-size: 18px; color: #ccc; max-width: 600px; margin: 0 auto; line-height: 1.8;">
+            "الأرض تبتسم بجهودكم، والنائب يثق في أمانتكم. لنبدأ المهمة!"
         </p>
     </div>
 </div>
@@ -147,4 +149,29 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "
+    // --- تعديل رسالة الترحيب الذكية ---
+    window.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('welcomeOverlay');
+        const nameSpan = document.getElementById('adminNameDisplay');
+        
+        // جلب اسم الأدمن من الذاكرة
+        const loggedAdmin = localStorage.getItem('loggedUser') || "يا بطل";
+        if(nameSpan) nameSpan.innerText = loggedAdmin;
+
+        // إخفاء تلقائي بعد 3 ثواني
+        setTimeout(() => {
+            if(overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 1000);
+            }
+        }, 3000);
+    });
+    // --- نهاية تعديل الترحيب ---
+
+    const SCRIPT_URL = "ضع_رابط_السكربت_هنا";
+
+    // أضف باقي دوال البرنامج هنا (loadData, renderTable, toggleVacation, logout... إلخ)
+</script>
+
+</body>
+</html>
