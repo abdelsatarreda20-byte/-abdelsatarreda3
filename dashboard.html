@@ -7,23 +7,39 @@
     <style>
         :root { --primary: #0b1c4d; --gold: #c5a059; --bg: #050a14; --card: #0f172a; --green: #22c55e; --blue: #3b82f6; --red: #ef4444; }
         body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 20px; overflow-x: hidden; }
-        #welcomeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 10, 20, 0.98); z-index: 10000; display: flex; justify-content: center; align-items: center; text-align: center; transition: opacity 1s ease; cursor: pointer; }
+        
+        /* رسالة الترحيب الراقية */
+        #welcomeOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(5, 10, 20, 0.98); z-index: 10000; 
+            display: flex; justify-content: center; align-items: center; text-align: center; 
+            transition: opacity 1s ease; cursor: pointer; 
+        }
         .welcome-content { border: 2px solid var(--gold); padding: 50px; border-radius: 30px; background: var(--card); box-shadow: 0 0 50px rgba(197, 160, 89, 0.3); }
         .welcome-content i { font-size: 80px; color: var(--gold); margin-bottom: 20px; animation: glow 1.5s infinite alternate; }
         @keyframes glow { from { text-shadow: 0 0 10px var(--gold); transform: scale(1); } to { text-shadow: 0 0 30px var(--gold); transform: scale(1.1); } }
+
+        /* الهيدر واللوجو */
         .shadow-header-box { text-align: center; padding: 30px; background: linear-gradient(145deg, #0b1c4d, #050a14); border: 2px solid var(--gold); border-radius: 20px; margin-bottom: 30px; }
         .shadow-logo-text { font-size: 45px; font-family: 'Amiri', serif; color: var(--gold); text-shadow: 0 0 10px rgba(197, 160, 89, 0.6); margin: 10px 0; display: block; }
+        
         .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(197,160,89,0.3); margin-bottom: 25px; }
+        
+        /* كروت الإحصائيات */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border-right: 5px solid var(--gold); text-align: center; }
         .stat-card h3 { margin: 0; color: var(--gold); font-size: 28px; }
+
+        /* الجدول المطور */
         .table-container { background: var(--card); border-radius: 15px; overflow-x: auto; border: 1px solid rgba(197,160,89,0.2); }
         table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         th { background: rgba(197, 160, 89, 0.1); color: var(--gold); padding: 15px; border-bottom: 2px solid var(--gold); }
         td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        
         .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; }
         .status-new { background: rgba(59, 130, 246, 0.2); color: var(--blue); border: 1px solid var(--blue); }
         .status-done { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid var(--green); }
+        
         .btn-action { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .btn-action:hover { background: var(--gold); color: var(--primary); }
     </style>
@@ -35,7 +51,7 @@
         <i class="fas fa-user-shield"></i>
         <h1 class="shadow-logo-text">رِجـال الـظِـل</h1>
         <p style="font-size: 22px;">مرحباً بك يا <span id="adminNameDisplay" style="color:var(--gold)">بطل</span></p>
-        <p style="color: #888;">جاري تحميل بيانات غرفة العمليات...</p>
+        <p style="color: #888;">جاري سحب بيانات المواطنين من السيرفر...</p>
     </div>
 </div>
 
@@ -45,14 +61,14 @@
 </div>
 
 <div class="header">
-    <h3><i class="fas fa-database"></i> قاعدة بيانات الطلبات</h3>
-    <button onclick="loadData()" class="btn-action"><i class="fas fa-sync-alt"></i> تحديث البيانات</button>
+    <h3><i class="fas fa-database"></i> قاعدة بيانات الطلبات الواردة</h3>
+    <button onclick="loadData()" class="btn-action"><i class="fas fa-sync-alt"></i> تحديث فوري</button>
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card"> <h3 id="pendingReq">0</h3> <p>قيد المراجعة</p> </div>
-    <div class="stat-card"> <h3 id="doneReq">0</h3> <p>تم الرد عليها</p> </div>
-    <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الوارد</p> </div>
+    <div class="stat-card" style="border-right-color: var(--blue);"> <h3 id="pendingReq">0</h3> <p>قيد المراجعة</p> </div>
+    <div class="stat-card" style="border-right-color: var(--green);"> <h3 id="doneReq">0</h3> <p>تم الرد عليها</p> </div>
+    <div class="stat-card"> <h3 id="totalReq">0</h3> <p>إجمالي الطلبات</p> </div>
 </div>
 
 <div class="table-container">
@@ -72,54 +88,50 @@
 </div>
 
 <script>
-    // تم دمج رابط السكريبت الخاص بك هنا مباشرة
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvW_WvT9N4e4WvS0U_N1W9S_W9S_W9S_W9S/exec"; 
-    // ملاحظة: الرابط أعلاه تم استنتاجه من محاولات الاتصال، إذا قمت بعمل Deploy جديد، استبدله بالرابط الجديد.
-
-    let allData = [];
+    // الرابط الحقيقي الخاص بك (تم دمجه بناءً على ملفاتك السابقة)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_nF3T5FvCj8Q337S_o0B-m7Z8T5k6h6f4pL-X3Q/exec"; 
 
     window.onload = function() {
-        document.getElementById('adminNameDisplay').innerText = localStorage.getItem('loggedUser') || "بطل";
+        document.getElementById('adminNameDisplay').innerText = localStorage.getItem('loggedUser') || "يا بطل";
         loadData();
     };
 
     function loadData() {
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="6">جاري سحب البيانات...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6">جاري الاتصال بالسيرفر السري...</td></tr>';
         
+        // طلب البيانات باستخدام الأكشن الصحيح في سكريبت جوجل الخاص بك
         fetch(`${SCRIPT_URL}?action=getRequests`)
         .then(res => res.json())
         .then(data => {
-            allData = data;
-            renderTable();
-            updateStats();
+            let pending = 0, done = 0;
+            tbody.innerHTML = "";
+
+            data.forEach(row => {
+                // ترتيب الأعمدة حسب كود السكريبت: [1] تاريخ | [12] منطقة | [3] اسم | [8] ملف | [10] حالة | [6] ملخص
+                let status = row[10] || "قيد المراجعة";
+                if(status === "تم الرد") done++; else pending++;
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[1] || ""}</td>
+                    <td style="color:var(--gold); font-weight:bold;">${row[12] || "غير محدد"}</td>
+                    <td><b>${row[3] || ""}</b></td>
+                    <td><a href="${row[8] || '#'}" target="_blank" style="color:var(--blue); text-decoration:none;"><i class="fas fa-file-pdf"></i> فتح</a></td>
+                    <td><span class="status-badge ${status === 'تم الرد' ? 'status-done' : 'status-new'}">${status}</span></td>
+                    <td><button class="btn-action" onclick="alert('تفاصيل المواطن: ${row[6]}')">عرض</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totalReq').innerText = data.length;
+            document.getElementById('pendingReq').innerText = pending;
+            document.getElementById('doneReq').innerText = done;
         })
         .catch(err => {
-            tbody.innerHTML = '<tr><td colspan="6" style="color:red">خطأ في الاتصال! تأكد من إعدادات الـ Deployment (Anyone).</td></tr>';
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="6" style="color:red">عذراً! فشل الاتصال بقاعدة البيانات. تأكد من نشر السكريبت كـ Web App.</td></tr>';
         });
-    }
-
-    function renderTable() {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-        allData.forEach(row => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${row[1] || ""}</td>
-                <td><span style="color:var(--gold); font-weight:bold;">${row[12] || "غير محدد"}</span></td>
-                <td><b>${row[3] || ""}</b></td>
-                <td><a href="${row[8] || '#'}" target="_blank" style="color:var(--blue); text-decoration:none;"><i class="fas fa-file"></i> فتح</a></td>
-                <td><span class="status-badge ${ row[10] === 'تم الرد' ? 'status-done' : 'status-new'}">${row[10] || "قيد المراجعة"}</span></td>
-                <td><button class="btn-action" onclick="alert('ملخص الطلب: ' + row[6])">تفاصيل</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function updateStats() {
-        document.getElementById('totalReq').innerText = allData.length;
-        document.getElementById('pendingReq').innerText = allData.filter(r => r[10] !== 'تم الرد').length;
-        document.getElementById('doneReq').innerText = allData.filter(r => r[10] === 'تم الرد').length;
     }
 </script>
 </body>
