@@ -26,45 +26,44 @@
             background: white; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.3); 
             border: 20px solid var(--primary);
         }
-        /* برواز ذهبي داخلي نحيف */
         .inner-border { border: 2px solid var(--gold); height: 100%; padding: 30px; position: relative; min-height: 265mm; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/white-paper.png'); }
         
-        /* الهيدر الجديد الفخم */
-        .royal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px; border-bottom: 3px solid var(--gold); margin-bottom: 30px; }
+        /* الهيدر الجديد الفخم مع شعار المجلس */
+        .royal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 3px double var(--gold); margin-bottom: 30px; }
         .header-right { text-align: center; flex: 1; }
         .header-left { text-align: center; flex: 1; font-weight: bold; }
         .center-logo { flex: 0.8; text-align: center; position: relative; }
         
+        .parliament-logo { height: 90px; width: auto; margin-bottom: 5px; }
         .deputy-profile {
-            width: 130px; height: 160px; border: 4px double var(--gold);
-            padding: 3px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 120px; height: 145px; border: 3px double var(--gold);
+            padding: 2px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             object-fit: cover; background: white;
         }
 
-        .gov-title { font-size: 22px; color: var(--primary); margin: 0; font-weight: 900; letter-spacing: 1px; }
-        .parliament-title { font-size: 18px; color: var(--gold); margin: 5px 0; font-weight: bold; }
+        .gov-title-new { font-size: 18px; color: var(--primary); margin: 0; font-weight: 900; }
+        .parliament-title-new { font-size: 16px; color: var(--primary); margin: 2px 0; font-weight: bold; }
         
         /* سريّة المطورة */
         .sarya-box {
             background: linear-gradient(to bottom, #0a1931, #152b52); border: 2px solid var(--gold);
-            padding: 15px 50px; border-radius: 15px; display: inline-block; margin: 30px 0;
+            padding: 12px 40px; border-radius: 12px; display: inline-block; margin: 25px 0;
             box-shadow: 0 10px 20px rgba(10, 25, 49, 0.2);
         }
-        .sarya-label { color: var(--gold); font-size: 38px; font-weight: 900; margin-left: 15px; }
-        .sarya-code { color: #fff; font-size: 45px; font-family: 'Monospace'; font-weight: bold; }
+        .sarya-label { color: var(--gold); font-size: 32px; font-weight: 900; margin-left: 15px; vertical-align: middle; }
+        .sarya-code { color: #fff; font-size: 40px; font-family: 'Monospace'; font-weight: bold; vertical-align: middle; }
 
         /* الجدول */
         .data-table { width: 100%; margin-top: 10px; border-collapse: collapse; }
-        .data-table td { padding: 18px; border-bottom: 1px solid #f0f0f0; font-size: 17px; }
-        .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 4px solid var(--gold); }
+        .data-table td { padding: 15px; border-bottom: 1px solid #f0f0f0; font-size: 17px; }
+        .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 5px solid var(--gold); }
         .data-table td.val { color: #333; padding-right: 25px; }
 
-        .subject-box { margin-top: 25px; padding: 25px; background: rgba(197, 160, 89, 0.05); border-radius: 15px; border: 1px solid rgba(197, 160, 89, 0.2); line-height: 1.8; font-size: 17px; }
+        .subject-box { margin-top: 25px; padding: 25px; background: rgba(197, 160, 89, 0.05); border-radius: 15px; border: 1px solid rgba(197, 160, 89, 0.2); line-height: 1.8; font-size: 17px; min-height: 120px; }
 
-        /* التذييل */
+        /* التذييل الجديد */
         .official-footer { margin-top: auto; padding-top: 30px; border-top: 2px solid #eee; }
         .footer-grid { display: flex; justify-content: space-between; align-items: center; }
-        .qr-placeholder { width: 80px; height: 80px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; text-align: center; }
 
         @media print {
             body { background: white; }
@@ -136,22 +135,23 @@
 
             <div class="royal-header">
                 <div class="header-right">
-                    <h2 class="gov-title">جمهورية مصر العربية</h2>
-                    <h3 class="parliament-title">مجلس النواب المصري</h3>
-                    <p style="margin:5px 0; font-weight:900; color:var(--primary);">الدورة التشريعية الحالية</p>
+                    <img src="https://i.ibb.co/fY0NXyMj/images-removebg-preview.png" class="parliament-logo">
+                    <div class="gov-title-new">جمهورية مصر العربية</div>
+                    <div class="parliament-title-new">مجلس النواب المصري</div>
                 </div>
                 <div class="center-logo">
                     <img src="https://i.ibb.co/YF4BxR0H/6008320486313495499-121.jpg" class="deputy-profile">
                 </div>
                 <div class="header-left">
-                    <p style="margin:0; font-size:18px;">مكتب سيادة النائب</p>
+                    <p style="margin:0; font-size:16px; color:#555;">مكتب سيادة النائب</p>
                     <p style="margin:5px 0; font-size:22px; color:var(--gold); font-weight:900;">عبد الستار رضا</p>
-                    <small style="color:#555;">عضو مجلس النواب</small>
+                    <p style="margin:0; font-size:14px; font-weight:bold; color:var(--primary);">عضو مجلس النواب</p>
+                    <small style="color:#666;">دائرة أرمنت والقرنة</small>
                 </div>
             </div>
 
             <div style="text-align:center;">
-                <h2 style="color:var(--primary); letter-spacing: 2px; margin:0;">إخطار إيداع طلب رسمي</h2>
+                <h2 style="color:var(--primary); letter-spacing: 1px; margin:0; font-weight:900;">إخطار إيداع طلب رسمي</h2>
                 <div class="sarya-box">
                     <span class="sarya-label">سَـرِيّة</span>
                     <span id="resOrderNo" class="sarya-code">---</span>
@@ -161,11 +161,11 @@
             <table class="data-table">
                 <tr>
                     <td class="label">اسم مُقدم الطلب</td>
-                    <td id="resName" class="val" style="font-weight:900; font-size:20px;"></td>
+                    <td id="resName" class="val" style="font-weight:900; font-size:19px; color:var(--primary);"></td>
                 </tr>
                 <tr>
                     <td class="label">الرقم القومي (ID)</td>
-                    <td id="resID" class="val"></td>
+                    <td id="resID" class="val" style="font-family: monospace; font-size:18px;"></td>
                 </tr>
                 <tr>
                     <td class="label">الدائرة / المركز</td>
@@ -178,30 +178,32 @@
             </table>
 
             <div class="subject-box">
-                <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:10px; display:inline-block;">موضوع الطلب المودع:</b>
-                <div id="resSummary"></div>
+                <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:12px; display:inline-block;">موضوع الطلب المودع:</b>
+                <div id="resSummary" style="font-style: italic;"></div>
             </div>
 
-            <div style="margin-top:25px; padding:15px; background:#fff9e6; border:1px solid var(--gold); border-radius:10px;">
-                <p style="margin:0; font-weight:bold; color:#856404; font-size:15px;">
-                    <i class="fas fa-info-circle"></i> تعليمات هامة:
+            <div style="margin-top:20px; padding:20px; border:2px solid var(--gold); border-radius:15px; text-align:center; background: rgba(197, 160, 89, 0.03);">
+                <p style="margin:0; font-weight:900; color:var(--primary); font-size:18px;">
+                    <i class="fas fa-exclamation-circle" style="color:var(--gold);"></i> 
+                    يرجى الاحتفاظ بهذا الإيصال ومتابعة حالة الطلب عبر (صفحة المتابعة) بالمنصة باستخدام الرقم القومي.
                 </p>
-                <ul style="margin:10px 0 0 0; font-size:14px; color:#555;">
-                    <li>يرجى <b>الاحتفاظ بهذا الإيصال</b> (مطبوعاً أو كصورة) كونه المرجع القانوني لطلبك.</li>
-                    <li>يمكنك متابعة حالة الطلب عبر صفحة <b>"متابعة الطلبات"</b> على المنصة باستخدام رقمك القومي.</li>
-                    <li>يتم مراجعة الطلبات والرد عليها من قبل المكتب الفني لسيادة النائب خلال 48 ساعة.</li>
-                </ul>
             </div>
 
             <div class="official-footer">
                 <div class="footer-grid">
-                    <div>
-                        <p style="font-weight:900; color:var(--primary); margin:0;">ختم المنصة الإلكترونية</p>
-                        <p style="font-size:12px; color:#888; margin:5px 0;">مستند مؤمن رقمياً بنظام "رجال الظل"</p>
+                    <div style="text-align: right;">
+                        <p style="font-size:11px; color:#888; margin:0;">نظام الإدارة الرقمية - مكتب النائب</p>
+                        <p style="font-size:10px; color:#aaa; margin:2px 0;">تشفير البيانات: نشط</p>
                     </div>
+                    
                     <div style="text-align:center;">
-                        <div style="font-weight:900; font-size:18px; color:var(--gold);">رِجـال الـظِـل</div>
-                        <i class="fas fa-user-shield" style="font-size:25px; color:var(--primary);"></i>
+                        <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                            <span style="font-weight:900; font-size:22px; color:var(--gold); letter-spacing:2px;">رِجـال الـظِـل</span>
+                            <i class="fas fa-user-shield" style="font-size:28px; color:var(--primary);"></i>
+                        </div>
+                        <div style="margin-top: 5px; font-family: 'Arial Black', sans-serif; font-size: 24px; color: var(--primary); opacity: 0.8; letter-spacing: 8px;">
+                            HK
+                        </div>
                     </div>
                 </div>
             </div>
@@ -209,10 +211,10 @@
     </div>
 
     <div class="no-print" style="text-align:center; padding: 40px;">
-        <button onclick="window.print()" class="btn-submit" style="width:auto; padding: 15px 50px; background:#28a745;">
-            <i class="fas fa-print"></i> طباعة الإيصال الرسمي الآن
+        <button onclick="window.print()" class="btn-submit" style="width:auto; padding: 15px 60px; background:#28a745;">
+            <i class="fas fa-print"></i> طـبـاعة الإيصال الـرسمي
         </button>
-        <p style="margin-top:15px;"><a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none;">العودة للصفحة الرئيسية</a></p>
+        <p style="margin-top:20px;"><a href="index.html" style="color:var(--primary); font-weight:bold; text-decoration:none; border:1px solid var(--primary); padding:10px 25px; border-radius:8px;">العودة للرئيسية</a></p>
     </div>
 </div>
 
@@ -276,13 +278,12 @@
                 }
             })
             .catch(err => {
-                alert("فشل الاتصال بالخادم الرئيسي");
+                alert("تعذر الاتصال بالمنصة");
                 btn.disabled = false;
                 loader.style.display = "none";
             });
         };
     };
 </script>
-
 </body>
 </html>
