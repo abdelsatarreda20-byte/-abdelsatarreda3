@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقديم طلب جديد | مكتب النائب عبد الستار رضا</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #0a1931; --gold: #c5a059; --gold-light: #e0c58e; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 0; text-align: right; }
@@ -28,7 +29,6 @@
         }
         .inner-border { border: 2px solid var(--gold); height: 100%; padding: 30px; position: relative; min-height: 265mm; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/white-paper.png'); }
         
-        /* الهيدر الجديد الفخم مع شعار المجلس */
         .royal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 3px double var(--gold); margin-bottom: 30px; }
         .header-right { text-align: center; flex: 1; }
         .header-left { text-align: center; flex: 1; font-weight: bold; }
@@ -44,7 +44,6 @@
         .gov-title-new { font-size: 18px; color: var(--primary); margin: 0; font-weight: 900; }
         .parliament-title-new { font-size: 16px; color: var(--primary); margin: 2px 0; font-weight: bold; }
         
-        /* سريّة المطورة */
         .sarya-box {
             background: linear-gradient(to bottom, #0a1931, #152b52); border: 2px solid var(--gold);
             padding: 12px 40px; border-radius: 12px; display: inline-block; margin: 25px 0;
@@ -53,7 +52,6 @@
         .sarya-label { color: var(--gold); font-size: 32px; font-weight: 900; margin-left: 15px; vertical-align: middle; }
         .sarya-code { color: #fff; font-size: 40px; font-family: 'Monospace'; font-weight: bold; vertical-align: middle; }
 
-        /* الجدول */
         .data-table { width: 100%; margin-top: 10px; border-collapse: collapse; }
         .data-table td { padding: 15px; border-bottom: 1px solid #f0f0f0; font-size: 17px; }
         .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 5px solid var(--gold); }
@@ -61,9 +59,8 @@
 
         .subject-box { margin-top: 25px; padding: 25px; background: rgba(197, 160, 89, 0.05); border-radius: 15px; border: 1px solid rgba(197, 160, 89, 0.2); line-height: 1.8; font-size: 17px; min-height: 120px; }
 
-        /* التذييل الجديد */
+        /* التذييل المطور */
         .official-footer { margin-top: auto; padding-top: 30px; border-top: 2px solid #eee; }
-        .footer-grid { display: flex; justify-content: space-between; align-items: center; }
 
         @media print {
             body { background: white; }
@@ -178,7 +175,7 @@
             </table>
 
             <div class="subject-box">
-                <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:12px; display:inline-block;">موضوع الطلب  المقدم:</b>
+                <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:12px; display:inline-block;">موضوع الطلب المقدم:</b>
                 <div id="resSummary" style="font-style: italic;"></div>
             </div>
 
@@ -190,19 +187,23 @@
             </div>
 
             <div class="official-footer">
-                <div class="footer-grid">
+                <div class="footer-grid" style="display: flex; justify-content: space-between; align-items: flex-end;">
                     <div style="text-align: right;">
                         <p style="font-size:11px; color:#888; margin:0;">نظام الإدارة الرقمية - مكتب النائب</p>
-                        <p style="font-size:10px; color:#aaa; margin:2px 0;">بالناس و للناس</p>
+                        <p style="font-size:13px; color:var(--primary); margin:2px 0; font-weight: bold;">بالناس و لـلـناس</p>
                     </div>
                     
                     <div style="text-align:center;">
-                        <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
-                            <span style="font-weight:900; font-size:22px; color:var(--gold); letter-spacing:2px;">رِجـال الـظِـل</span>
-                            <i class="fas fa-user-shield" style="font-size:28px; color:var(--primary);"></i>
+                        <div style="margin-bottom: 5px;">
+                            <img src="https://i.ibb.co/v6mHwZb9/19-2025-638940861396941032-694-removebg-preview-1.png" style="width: 55px; height: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));">
                         </div>
-                        <div style="margin-top: 5px; font-family: 'Arial Black', sans-serif; font-size: 24px; color: var(--primary); opacity: 0.8; letter-spacing: 8px;">
-                            HK
+                        
+                        <div style="font-weight:900; font-size:24px; color:var(--primary); font-family: 'Amiri', serif; line-height: 1;">
+                            <span style="color:var(--gold);">رِ</span>جَـال الـ<span style="color:var(--gold);">ظِـ</span>ـل
+                        </div>
+                        
+                        <div style="margin-top: 8px; border-top: 1px solid var(--gold); padding-top: 4px;">
+                            <span style="font-family: 'Arial Black', sans-serif; font-size: 20px; color: var(--primary); letter-spacing: 12px; margin-right: 12px; opacity: 0.9;">HK</span>
                         </div>
                     </div>
                 </div>
