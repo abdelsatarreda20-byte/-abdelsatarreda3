@@ -57,9 +57,28 @@
         .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 5px solid var(--gold); }
         .data-table td.val { color: #333; padding-right: 25px; }
 
-        .subject-box { margin-top: 25px; padding: 25px; background: rgba(197, 160, 89, 0.05); border-radius: 15px; border: 1px solid rgba(197, 160, 89, 0.2); line-height: 1.8; font-size: 17px; min-height: 120px; }
+        /* حل مشكلة النص الطويل وكسر السطور */
+        .subject-box { 
+            margin-top: 25px; 
+            padding: 25px; 
+            background: rgba(197, 160, 89, 0.05); 
+            border-radius: 15px; 
+            border: 1px solid rgba(197, 160, 89, 0.2); 
+            line-height: 1.8; 
+            font-size: 17px; 
+            min-height: 120px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        #resSummary {
+            font-style: italic;
+            white-space: pre-wrap; /* يحافظ على السطور والمسافات ويجبر النص على النزول */
+            word-break: break-word;
+            display: block;
+            width: 100%;
+        }
 
-        /* التذييل المطور */
         .official-footer { margin-top: auto; padding-top: 30px; border-top: 2px solid #eee; }
 
         @media print {
@@ -128,7 +147,7 @@
 <div id="receiptSection">
     <div class="paper">
         <div class="inner-border">
-            <img src="https://i.ibb.co/v6mHwZb9/19-2025-638940861396941032-694-removebg-preview-1.png" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:70%; opacity:0.04; pointer-events:none;">
+            <img src="https://i.ibb.co/YF4BxR0H/6008320486313495499-121.jpg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:70%; opacity:0.04; pointer-events:none;">
 
             <div class="royal-header">
                 <div class="header-right">
@@ -176,7 +195,7 @@
 
             <div class="subject-box">
                 <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:12px; display:inline-block;">موضوع الطلب المقدم:</b>
-                <div id="resSummary" style="font-style: italic;"></div>
+                <div id="resSummary"></div>
             </div>
 
             <div style="margin-top:20px; padding:20px; border:2px solid var(--gold); border-radius:15px; text-align:center; background: rgba(197, 160, 89, 0.03);">
@@ -195,7 +214,7 @@
                     
                     <div style="text-align:center;">
                         <div style="margin-bottom: 5px;">
-                            <img src="https://i.ibb.co/v6mHwZb9/19-2025-638940861396941032-694-removebg-preview-1.png" style="width: 55px; height: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));">
+                            <img src="https://i.ibb.co/YF4BxR0H/6008320486313495499-121.jpg" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));">
                         </div>
                         
                         <div style="font-weight:900; font-size:24px; color:var(--primary); font-family: 'Amiri', serif; line-height: 1;">
