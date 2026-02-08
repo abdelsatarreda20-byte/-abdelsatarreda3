@@ -238,13 +238,40 @@
 
     window.onclick = (e) => { if(e.target == document.getElementById('previewModal')) closePreview(); }
 
+    // --- الدالة المحدثة بالسرعة القصوى ---
     function applyAction(idx, type) {
         if(!type) return;
-        let finalVal = "تم الرد: " + prompt("اكتب الرد المخصص:");
-        if(finalVal.includes("null") || finalVal === "تم الرد: ") return;
+        let reply = prompt("اكتب الرد المخصص:");
+        if(reply === null || reply.trim() === "") return;
         
+        let finalVal = "تم الرد: " + reply;
+
+        // 1. تحديث متفائل فوراً في واجهة المستخدم
+        const rowIdxInData = allData.findIndex((r, i) => (allData.length - i + 1) === idx);
+        let oldStatus = ""; 
+        
+        if(rowIdxInData !== -1) {
+            oldStatus = allData[rowIdxInData][10];
+            allData[rowIdxInData][10] = "⏳ جاري الحفظ..."; 
+            allData[rowIdxInData][11] = CURRENT_USER;
+            renderTable(); // تحديث الجدول فوراً
+        }
+
+        // 2. إرسال الطلب للسيرفر في الخلفية
         fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${idx}&status=${encodeURIComponent(finalVal)}&adminName=${encodeURIComponent(CURRENT_USER)}`)
-        .then(() => { alert("تم الحفظ بنجاح!"); loadData(); });
+        .then(r => r.json())
+        .then(res => {
+            // تحديث الحالة النهائية بعد تأكيد السيرفر
+            allData[rowIdxInData][10] = finalVal;
+            calculateStats();
+            renderTable();
+            console.log("تم التأكيد في السيرفر ✅");
+        })
+        .catch(err => {
+            alert("⚠️ فشل الاتصال بالسيرفر، سيتم استرجاع الحالة القديمة.");
+            allData[rowIdxInData][10] = oldStatus; 
+            renderTable();
+        });
     }
 
     function updateFilter(f) {
