@@ -7,8 +7,35 @@
     <style>
         :root { --gold: #c5a059; --bg: #050a14; --card: #0f172a; --red: #ef4444; --green: #22c55e; --blue: #3b82f6; }
         body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; color: white; margin: 0; padding: 15px; }
-        .shadow-header { text-align: center; padding: 10px; border: 2px solid var(--gold); border-radius: 15px; margin-bottom: 20px; background: linear-gradient(to bottom, #0b1c4d, #050a14); }
+        
+        /* تعديل الهيدر ليحتوي على الأيقونة والحركة */
+        .shadow-header { 
+            text-align: center; 
+            padding: 15px; 
+            border: 2px solid var(--gold); 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            background: linear-gradient(to bottom, #0b1c4d, #050a14);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
         .shadow-logo-text { font-size: 30px; color: var(--gold); font-family: 'Amiri', serif; margin: 0; }
+        
+        /* أنيميشن النبض للأيقونة */
+        .pulse-icon {
+            font-size: 35px;
+            color: var(--gold);
+            animation: shadow-pulse 2s infinite ease-in-out;
+        }
+        
+        @keyframes shadow-pulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--gold)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 10px var(--gold)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 2px var(--gold)); }
+        }
+
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: var(--card); border: 1px solid rgba(197,160,89,0.2); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; }
         .stat-card.active { border-color: var(--gold); background: rgba(197,160,89,0.15); }
@@ -57,7 +84,10 @@
     </div>
 </div>
 
-<div class="shadow-header"><h1 class="shadow-logo-text">رِجـال الـظِـل</h1></div>
+<div class="shadow-header">
+    <i class="fas fa-user-secret pulse-icon"></i>
+    <h1 class="shadow-logo-text">رِجـال الـظِـل</h1>
+</div>
 
 <div class="stats-grid">
     <div class="stat-card active" id="stat-all" onclick="updateFilter('all')"><h3>إجمالي الطلبات</h3><p id="count-all">0</p></div>
@@ -238,7 +268,6 @@
 
     window.onclick = (e) => { if(e.target == document.getElementById('previewModal')) closePreview(); }
 
-    // --- الدالة المحدثة بالسرعة القصوى ---
     function applyAction(idx, type) {
         if(!type) return;
         let reply = prompt("اكتب الرد المخصص:");
@@ -246,7 +275,6 @@
         
         let finalVal = "تم الرد: " + reply;
 
-        // 1. تحديث متفائل فوراً في واجهة المستخدم
         const rowIdxInData = allData.findIndex((r, i) => (allData.length - i + 1) === idx);
         let oldStatus = ""; 
         
@@ -254,14 +282,12 @@
             oldStatus = allData[rowIdxInData][10];
             allData[rowIdxInData][10] = "⏳ جاري الحفظ..."; 
             allData[rowIdxInData][11] = CURRENT_USER;
-            renderTable(); // تحديث الجدول فوراً
+            renderTable(); 
         }
 
-        // 2. إرسال الطلب للسيرفر في الخلفية
         fetch(`${SCRIPT_URL}?action=updateStatus&rowIndex=${idx}&status=${encodeURIComponent(finalVal)}&adminName=${encodeURIComponent(CURRENT_USER)}`)
         .then(r => r.json())
         .then(res => {
-            // تحديث الحالة النهائية بعد تأكيد السيرفر
             allData[rowIdxInData][10] = finalVal;
             calculateStats();
             renderTable();
