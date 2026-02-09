@@ -23,68 +23,78 @@
         /* --- تصميم الإيصال الملكي الفخم --- */
         #receiptSection { display: none; background: #d1d5db; padding: 50px 0; }
         .paper { 
-            width: 210mm; min-height: 297mm; padding: 12mm; margin: auto; 
-            background: white; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.3); 
+            width: 210mm; 
+            height: 297mm; /* تحديد طول ثابت A4 */
+            padding: 10mm; 
+            margin: auto; 
+            background: white; 
+            position: relative; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.3); 
             border: 20px solid var(--primary);
+            box-sizing: border-box;
+            overflow: hidden; /* يمنع خروج المحتوى لصفحة ثانية */
         }
-        .inner-border { border: 2px solid var(--gold); height: 100%; padding: 30px; position: relative; min-height: 265mm; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/white-paper.png'); }
+        .inner-border { border: 2px solid var(--gold); height: 100%; padding: 25px; position: relative; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/white-paper.png'); box-sizing: border-box; }
         
-        .royal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 3px double var(--gold); margin-bottom: 30px; }
+        .royal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 3px double var(--gold); margin-bottom: 20px; }
         .header-right { text-align: center; flex: 1; }
         .header-left { text-align: center; flex: 1; font-weight: bold; }
         .center-logo { flex: 0.8; text-align: center; position: relative; }
         
-        .parliament-logo { height: 90px; width: auto; margin-bottom: 5px; }
+        .parliament-logo { height: 75px; width: auto; margin-bottom: 5px; }
         .deputy-profile {
-            width: 120px; height: 145px; border: 3px double var(--gold);
+            width: 110px; height: 135px; border: 3px double var(--gold);
             padding: 2px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             object-fit: cover; background: white;
         }
 
-        .gov-title-new { font-size: 18px; color: var(--primary); margin: 0; font-weight: 900; }
-        .parliament-title-new { font-size: 16px; color: var(--primary); margin: 2px 0; font-weight: bold; }
+        .gov-title-new { font-size: 16px; color: var(--primary); margin: 0; font-weight: 900; }
+        .parliament-title-new { font-size: 14px; color: var(--primary); margin: 2px 0; font-weight: bold; }
         
         .sarya-box {
             background: linear-gradient(to bottom, #0a1931, #152b52); border: 2px solid var(--gold);
-            padding: 12px 40px; border-radius: 12px; display: inline-block; margin: 25px 0;
+            padding: 10px 35px; border-radius: 12px; display: inline-block; margin: 15px 0;
             box-shadow: 0 10px 20px rgba(10, 25, 49, 0.2);
         }
-        .sarya-label { color: var(--gold); font-size: 32px; font-weight: 900; margin-left: 15px; vertical-align: middle; }
-        .sarya-code { color: #fff; font-size: 40px; font-family: 'Monospace'; font-weight: bold; vertical-align: middle; }
+        .sarya-label { color: var(--gold); font-size: 28px; font-weight: 900; margin-left: 15px; vertical-align: middle; }
+        .sarya-code { color: #fff; font-size: 35px; font-family: 'Monospace'; font-weight: bold; vertical-align: middle; }
 
-        .data-table { width: 100%; margin-top: 10px; border-collapse: collapse; }
-        .data-table td { padding: 15px; border-bottom: 1px solid #f0f0f0; font-size: 17px; }
+        .data-table { width: 100%; margin-top: 5px; border-collapse: collapse; }
+        .data-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 16px; }
         .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 5px solid var(--gold); }
-        .data-table td.val { color: #333; padding-right: 25px; }
 
         .subject-box { 
-            margin-top: 25px; 
-            padding: 25px; 
+            margin-top: 15px; 
+            padding: 15px; 
             background: rgba(197, 160, 89, 0.05); 
-            border-radius: 15px; 
+            border-radius: 12px; 
             border: 1px solid rgba(197, 160, 89, 0.2); 
-            line-height: 1.8; 
-            font-size: 17px; 
-            min-height: 120px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            line-height: 1.6; 
+            font-size: 16px; 
+            min-height: 100px;
+            max-height: 250px; /* تحديد أقصى طول للنص */
+            overflow: hidden;
         }
         
         #resSummary {
             font-style: italic;
             white-space: pre-wrap;
-            word-break: break-word;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             display: block;
             width: 100%;
         }
 
-        .official-footer { margin-top: auto; padding-top: 30px; border-top: 2px solid #eee; }
+        .official-footer { margin-top: auto; padding-top: 20px; border-top: 2px solid #eee; }
 
+        /* تعديلات الطباعة النهائية */
         @media print {
-            body { background: white; }
-            #receiptSection { display: block !important; padding: 0; }
+            @page { size: A4; margin: 0; }
+            body { background: white; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            #receiptSection { display: block !important; padding: 0 !important; margin: 0 !important; }
             #formSection, .no-print { display: none !important; }
-            .paper { box-shadow: none; margin: 0; border: 15px solid var(--primary); }
+            .paper { box-shadow: none !important; margin: 0 !important; border: 15px solid var(--primary) !important; width: 210mm !important; height: 297mm !important; }
+            .inner-border { min-height: 267mm !important; }
         }
     </style>
 </head>
@@ -197,10 +207,10 @@
                 <div id="resSummary"></div>
             </div>
 
-            <div style="margin-top:20px; padding:20px; border:2px solid var(--gold); border-radius:15px; text-align:center; background: rgba(197, 160, 89, 0.03);">
-                <p style="margin:0; font-weight:900; color:var(--primary); font-size:18px;">
+            <div style="margin-top:20px; padding:15px; border:2px solid var(--gold); border-radius:15px; text-align:center; background: rgba(197, 160, 89, 0.03);">
+                <p style="margin:0; font-weight:900; color:var(--primary); font-size:16px;">
                     <i class="fas fa-exclamation-circle" style="color:var(--gold);"></i> 
-                    يرجى الاحتفاظ بهذا الإيصال ومتابعة حالة الطلب عبر (صفحة المتابعة) بالمنصة باستخدام الرقم القومي.
+                    يرجى الاحتفاظ بهذا الإيصال ومتابعة حالة الطلب بالرقم القومي.
                 </p>
             </div>
 
