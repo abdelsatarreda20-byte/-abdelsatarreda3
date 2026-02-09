@@ -35,6 +35,7 @@
         }
         .btn-track:hover { background: var(--gold); transform: translateY(-2px); }
 
+        /* الكارت المحسن لضمان بقاء النص بالداخل */
         .req-card { 
             background: #fffef0; 
             padding: 20px; border-radius: 15px; 
@@ -42,14 +43,21 @@
             margin-top: 20px; text-align: right;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             animation: fadeIn 0.5s ease;
+            /* إضافات الأمان */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow: hidden; 
         }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .status-badge { 
             display: inline-block; padding: 8px 15px; 
             border-radius: 10px; font-size: 14px; font-weight: bold; 
             background: var(--primary); color: white; margin-top: 10px; 
-            line-height: 1.4; max-width: 100%;
+            line-height: 1.4; 
+            word-wrap: break-word;
+            max-width: 100%; /* تضمن عدم خروج الرد الطويل عن الكارت */
         }
         
         .order-number {
@@ -89,12 +97,6 @@
     </div>
 
 <script>
-    /**
-     * هام جداً:
-     * 1. تأكد من أن السكريبت في Google Apps Script تم نشره (New Deployment).
-     * 2. تأكد أن الوصول (Who has access) هو "Anyone".
-     * 3. انسخ رابط الـ /exec الجديد وضعه هنا.
-     **/
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
 
     function trackRequest() {
@@ -111,11 +113,9 @@
         resDiv.innerHTML = "";
         loader.style.display = "block";
 
-        // نستخدم نظام script tag (JSONP) لأنه الأكثر استقراراً وبساطة
         const callbackName = "renderResults";
         const finalUrl = SCRIPT_URL + "?action=track&id=" + encodeURIComponent(id) + "&callback=" + callbackName;
         
-        // تنظيف أي طلب سابق
         const oldScript = document.getElementById('jsonp-script');
         if (oldScript) oldScript.remove(); 
 
@@ -123,7 +123,6 @@
         script.id = 'jsonp-script';
         script.src = finalUrl;
         
-        // في حالة وجود خطأ فني (مثل رابط خطأ)، نعامل المواطن برسالة "لا توجد نتائج" بدل "فشل اتصال"
         script.onerror = () => {
             loader.style.display = "none";
             renderResults([]); 
@@ -132,7 +131,6 @@
         document.body.appendChild(script);
     }
 
-    // هذه الدالة هي التي تستقبل البيانات وتعرضها
     function renderResults(data) {
         const resDiv = document.getElementById('results');
         const loader = document.getElementById('loader');
@@ -156,8 +154,10 @@
                     <span class="order-number">طلب رقم: ${req.orderNo}</span>
                     <div style="font-size: 12px; color: #64748b;"><i class="far fa-clock"></i> تاريخ التسجيل: ${req.date}</div>
                     <div style="margin: 15px 0 10px; color:#1e293b; line-height:1.6;">
-                        <strong>موضوع الطلب:</strong><br>
-                        ${req.summary || 'لم يتم إدراج ملخص'}
+                        <strong>موضوع الطلب:</strong>
+                        <span style="display:block; color:var(--primary); font-weight:bold; font-size:16px;">
+                            ${req.summary || 'لم يتم إدراج عنوان'}
+                        </span>
                     </div>
                     <div class="status-badge">
                         <i class="fas fa-info-circle"></i> الحالة والرد: ${req.status}
