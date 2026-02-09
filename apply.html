@@ -13,10 +13,14 @@
         /* تنسيق الفورم الأساسي */
         .header-apply { background: linear-gradient(135deg, #0a1931 0%, #152b52 100%); color: white; padding: 50px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
         .form-container { max-width: 700px; margin: -40px auto 40px; background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border: 1px solid rgba(197, 160, 89, 0.2); }
-        .form-group { margin-bottom: 25px; }
+        .form-group { margin-bottom: 25px; position: relative; }
         label { display: block; margin-bottom: 10px; font-weight: bold; color: var(--primary); font-size: 15px; }
         input, textarea { width: 100%; padding: 14px; border: 1.5px solid #e1e1e1; border-radius: 10px; box-sizing: border-box; font-size: 16px; transition: 0.3s; background: #fafafa; }
-        input:focus { border-color: var(--gold); background: #fff; outline: none; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
+        input:focus, textarea:focus { border-color: var(--gold); background: #fff; outline: none; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
+        
+        /* تنسيق عداد الحروف */
+        .char-counter { font-size: 12px; color: #888; position: absolute; left: 10px; bottom: -20px; }
+
         .btn-submit { background: var(--primary); color: white; border: none; padding: 20px; width: 100%; border-radius: 12px; font-size: 19px; font-weight: bold; cursor: pointer; transition: 0.4s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-submit:hover { background: var(--gold); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4); }
 
@@ -24,7 +28,7 @@
         #receiptSection { display: none; background: #d1d5db; padding: 50px 0; }
         .paper { 
             width: 210mm; 
-            height: 297mm; /* تحديد طول ثابت A4 */
+            height: 297mm; 
             padding: 10mm; 
             margin: auto; 
             background: white; 
@@ -32,7 +36,7 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.3); 
             border: 20px solid var(--primary);
             box-sizing: border-box;
-            overflow: hidden; /* يمنع خروج المحتوى لصفحة ثانية */
+            overflow: hidden; 
         }
         .inner-border { border: 2px solid var(--gold); height: 100%; padding: 25px; position: relative; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/white-paper.png'); box-sizing: border-box; }
         
@@ -71,30 +75,27 @@
             border: 1px solid rgba(197, 160, 89, 0.2); 
             line-height: 1.6; 
             font-size: 16px; 
-            min-height: 100px;
-            max-height: 250px; /* تحديد أقصى طول للنص */
-            overflow: hidden;
+            min-height: 80px;
         }
         
         #resSummary {
-            font-style: italic;
+            font-weight: bold;
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-wrap: break-word;
             display: block;
             width: 100%;
+            color: var(--primary);
         }
 
         .official-footer { margin-top: auto; padding-top: 20px; border-top: 2px solid #eee; }
 
-        /* تعديلات الطباعة النهائية */
         @media print {
             @page { size: A4; margin: 0; }
             body { background: white; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             #receiptSection { display: block !important; padding: 0 !important; margin: 0 !important; }
             #formSection, .no-print { display: none !important; }
             .paper { box-shadow: none !important; margin: 0 !important; border: 15px solid var(--primary) !important; width: 210mm !important; height: 297mm !important; }
-            .inner-border { min-height: 267mm !important; }
         }
     </style>
 </head>
@@ -135,10 +136,13 @@
                     <input type="text" id="address" required placeholder="القرية / الشارع">
                 </div>
             </div>
+            
             <div class="form-group">
-                <label><i class="fas fa-comment-dots"></i> تفاصيل الموضوع</label>
-                <textarea id="summary" rows="4" required placeholder="اشرح طلبك باختصار ووضوح..."></textarea>
+                <label><i class="fas fa-tag"></i> عنوان الطلب (بحد أقصى 40 حرف)</label>
+                <input type="text" id="summary" maxlength="40" required placeholder="مثال: طلب رصف طريق نجع أبو حميد" oninput="updateCharCount(this)">
+                <span class="char-counter" id="counter">المتبقي: 40 حرف</span>
             </div>
+
             <div class="form-group">
                 <label><i class="fas fa-upload"></i> إرفاق المستند (صورة الطلب)</label>
                 <input type="file" id="file" required accept="image/*,.pdf">
@@ -203,7 +207,7 @@
             </table>
 
             <div class="subject-box">
-                <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:12px; display:inline-block;">موضوع الطلب المقدم:</b>
+                <b style="color:var(--primary); border-bottom: 2px solid var(--gold); padding-bottom:5px; margin-bottom:12px; display:inline-block;">عنوان الطلب المقدم:</b>
                 <div id="resSummary"></div>
             </div>
 
@@ -225,11 +229,9 @@
                         <div style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; background: var(--primary); box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);">
                             <i class="fas fa-user-secret" style="font-size: 30px; color: var(--gold);"></i>
                         </div>
-                        
                         <div style="font-weight:900; font-size:24px; color:var(--primary); font-family: 'Amiri', serif; line-height: 1;">
                             <span style="color:var(--gold);">رِ</span>جَـال الـ<span style="color:var(--gold);">ظِـ</span>ـل
                         </div>
-                        
                         <div style="margin-top: 8px; border-top: 1px solid var(--gold); padding-top: 4px;">
                             <span style="font-family: 'Arial Black', sans-serif; font-size: 20px; color: var(--primary); letter-spacing: 12px; margin-right: 12px; opacity: 0.9;">HK</span>
                         </div>
@@ -249,6 +251,18 @@
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
+
+    // فانكشن عداد الحروف
+    function updateCharCount(input) {
+        const counter = document.getElementById('counter');
+        const remaining = 40 - input.value.length;
+        counter.innerText = `المتبقي: ${remaining} حرف`;
+        if (remaining <= 5) {
+            counter.style.color = "red";
+        } else {
+            counter.style.color = "#888";
+        }
+    }
 
     window.onload = function() {
         fetch(`${SCRIPT_URL}?action=checkStatus`)
