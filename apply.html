@@ -18,7 +18,6 @@
         input, textarea { width: 100%; padding: 14px; border: 1.5px solid #e1e1e1; border-radius: 10px; box-sizing: border-box; font-size: 16px; transition: 0.3s; background: #fafafa; }
         input:focus, textarea:focus { border-color: var(--gold); background: #fff; outline: none; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
         
-        /* تنسيق عداد الحروف */
         .char-counter { font-size: 12px; color: #888; position: absolute; left: 10px; bottom: -20px; }
 
         .btn-submit { background: var(--primary); color: white; border: none; padding: 20px; width: 100%; border-radius: 12px; font-size: 19px; font-weight: bold; cursor: pointer; transition: 0.4s; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -26,18 +25,7 @@
 
         /* --- تصميم الإيصال الملكي الفخم --- */
         #receiptSection { display: none; background: #d1d5db; padding: 50px 0; }
-        .paper { 
-            width: 210mm; 
-            height: 297mm; 
-            padding: 10mm; 
-            margin: auto; 
-            background: white; 
-            position: relative; 
-            box-shadow: 0 0 50px rgba(0,0,0,0.3); 
-            border: 20px solid var(--primary);
-            box-sizing: border-box;
-            overflow: hidden; 
-        }
+        .paper { width: 210mm; height: 297mm; padding: 10mm; margin: auto; background: white; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.3); border: 20px solid var(--primary); box-sizing: border-box; overflow: hidden; }
         .inner-border { border: 2px solid var(--gold); height: 100%; padding: 25px; position: relative; display: flex; flex-direction: column; background: url('https://www.transparenttextures.com/patterns/white-paper.png'); box-sizing: border-box; }
         
         .royal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 3px double var(--gold); margin-bottom: 20px; }
@@ -46,20 +34,12 @@
         .center-logo { flex: 0.8; text-align: center; position: relative; }
         
         .parliament-logo { height: 75px; width: auto; margin-bottom: 5px; }
-        .deputy-profile {
-            width: 110px; height: 135px; border: 3px double var(--gold);
-            padding: 2px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            object-fit: cover; background: white;
-        }
+        .deputy-profile { width: 110px; height: 135px; border: 3px double var(--gold); padding: 2px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover; background: white; }
 
         .gov-title-new { font-size: 16px; color: var(--primary); margin: 0; font-weight: 900; }
         .parliament-title-new { font-size: 14px; color: var(--primary); margin: 2px 0; font-weight: bold; }
         
-        .sarya-box {
-            background: linear-gradient(to bottom, #0a1931, #152b52); border: 2px solid var(--gold);
-            padding: 10px 35px; border-radius: 12px; display: inline-block; margin: 15px 0;
-            box-shadow: 0 10px 20px rgba(10, 25, 49, 0.2);
-        }
+        .sarya-box { background: linear-gradient(to bottom, #0a1931, #152b52); border: 2px solid var(--gold); padding: 10px 35px; border-radius: 12px; display: inline-block; margin: 15px 0; box-shadow: 0 10px 20px rgba(10, 25, 49, 0.2); }
         .sarya-label { color: var(--gold); font-size: 28px; font-weight: 900; margin-left: 15px; vertical-align: middle; }
         .sarya-code { color: #fff; font-size: 35px; font-family: 'Monospace'; font-weight: bold; vertical-align: middle; }
 
@@ -67,26 +47,8 @@
         .data-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 16px; }
         .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 5px solid var(--gold); }
 
-        .subject-box { 
-            margin-top: 15px; 
-            padding: 15px; 
-            background: rgba(197, 160, 89, 0.05); 
-            border-radius: 12px; 
-            border: 1px solid rgba(197, 160, 89, 0.2); 
-            line-height: 1.6; 
-            font-size: 16px; 
-            min-height: 80px;
-        }
-        
-        #resSummary {
-            font-weight: bold;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            display: block;
-            width: 100%;
-            color: var(--primary);
-        }
+        .subject-box { margin-top: 15px; padding: 15px; background: rgba(197, 160, 89, 0.05); border-radius: 12px; border: 1px solid rgba(197, 160, 89, 0.2); line-height: 1.6; font-size: 16px; min-height: 80px; }
+        #resSummary { font-weight: bold; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; display: block; width: 100%; color: var(--primary); }
 
         .official-footer { margin-top: auto; padding-top: 20px; border-top: 2px solid #eee; }
 
@@ -145,13 +107,13 @@
 
             <div class="form-group">
                 <label><i class="fas fa-upload"></i> إرفاق المستند (صورة الطلب)</label>
-                <input type="file" id="file" required accept="image/*,.pdf">
+                <input type="file" id="file" required accept="image/*">
             </div>
             <button type="submit" id="submitBtn" class="btn-submit">
                 <i class="fas fa-shield-alt"></i> تسجيل الطلب الان
             </button>
             <div id="loader" style="display:none; text-align:center; margin-top:20px; color:var(--primary);">
-                <i class="fas fa-sync fa-spin"></i> جاري ارسال طلبك وتجهيز الايصال...
+                <i class="fas fa-sync fa-spin"></i> جاري معالجة الصورة وإرسال طلبك...
             </div>
         </form>
     </div>
@@ -252,16 +214,11 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxP1k81A9J8vFFf3AKIcwLM8wl5Df63I9U1dQrWqD9pfMp17euQIWkwKr-bJ93eYH8e0w/exec";
 
-    // فانكشن عداد الحروف
     function updateCharCount(input) {
         const counter = document.getElementById('counter');
         const remaining = 40 - input.value.length;
         counter.innerText = `المتبقي: ${remaining} حرف`;
-        if (remaining <= 5) {
-            counter.style.color = "red";
-        } else {
-            counter.style.color = "#888";
-        }
+        counter.style.color = remaining <= 5 ? "red" : "#888";
     }
 
     window.onload = function() {
@@ -283,50 +240,80 @@
         const fileInput = document.getElementById('file');
         const file = fileInput.files[0];
 
+        if(!file) { alert("يرجى إرفاق صورة الطلب"); return; }
+
         btn.disabled = true;
         loader.style.display = "block";
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = function() {
-            const payload = {
-                fileData: reader.result,
-                fileName: file.name,
-                fullIdentity: document.getElementById('name').value,
-                nationalID: document.getElementById('nationalID').value,
-                phone: document.getElementById('phone').value,
-                district: document.getElementById('district').value,
-                address: document.getElementById('address').value,
-                summary: document.getElementById('summary').value
-            };
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function() {
+                // --- مرحلة ضغط وتصغير الصورة لزيادة السرعة ---
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // العرض الأقصى 1600 بكسل يضمن وضوح فائق للطباعة مع حجم ملف صغير
+                const MAX_WIDTH = 1600;
+                let width = img.width;
+                let height = img.height;
 
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === "success") {
-                    document.getElementById('resOrderNo').innerText = data.orderId;
-                    document.getElementById('resName').innerText = payload.fullIdentity;
-                    document.getElementById('resID').innerText = payload.nationalID;
-                    document.getElementById('resDistrict').innerText = payload.district;
-                    document.getElementById('resDate').innerText = new Date().toLocaleString('ar-EG');
-                    document.getElementById('resSummary').innerText = payload.summary;
-                    
-                    document.getElementById('formSection').style.display = 'none';
-                    document.getElementById('receiptSection').style.display = 'block';
-                    window.scrollTo(0,0);
-                } else {
-                    alert("خطأ: " + data.message);
-                    btn.disabled = false;
-                    loader.style.display = "none";
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
                 }
-            })
-            .catch(err => {
-                alert("تعذر الاتصال بالمنصة");
-                btn.disabled = false;
-                loader.style.display = "none";
-            });
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // تحويل لـ JPEG بجودة عالية 90% (توازن مثالي بين السرعة والوضوح)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.9);
+
+                const payload = {
+                    fileData: compressedBase64,
+                    fileName: file.name.split('.')[0] + ".jpg",
+                    fullIdentity: document.getElementById('name').value,
+                    nationalID: document.getElementById('nationalID').value,
+                    phone: document.getElementById('phone').value,
+                    district: document.getElementById('district').value,
+                    address: document.getElementById('address').value,
+                    summary: document.getElementById('summary').value
+                };
+
+                fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === "success") {
+                        document.getElementById('resOrderNo').innerText = data.orderId;
+                        document.getElementById('resName').innerText = payload.fullIdentity;
+                        document.getElementById('resID').innerText = payload.nationalID;
+                        document.getElementById('resDistrict').innerText = payload.district;
+                        document.getElementById('resDate').innerText = new Date().toLocaleString('ar-EG');
+                        document.getElementById('resSummary').innerText = payload.summary;
+                        
+                        document.getElementById('formSection').style.display = 'none';
+                        document.getElementById('receiptSection').style.display = 'block';
+                        window.scrollTo(0,0);
+                    } else {
+                        alert("خطأ: " + data.message);
+                        resetButton(btn, loader);
+                    }
+                })
+                .catch(err => {
+                    alert("حدث خطأ أثناء الاتصال بالمنصة، حاول مرة أخرى.");
+                    resetButton(btn, loader);
+                });
+            };
         };
     };
+
+    function resetButton(btn, loader) {
+        btn.disabled = false;
+        loader.style.display = "none";
+    }
 </script>
 </body>
 </html>
