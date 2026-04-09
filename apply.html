@@ -44,7 +44,7 @@
         .sarya-code { color: #fff; font-size: 35px; font-family: 'Monospace'; font-weight: bold; vertical-align: middle; }
 
         .data-table { width: 100%; margin-top: 5px; border-collapse: collapse; }
-        .data-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 16px; }
+        .data-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 16px; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; }
         .data-table td.label { width: 35%; color: var(--primary); font-weight: bold; background: #fcfbf7; border-left: 5px solid var(--gold); }
 
         .subject-box { margin-top: 15px; padding: 15px; background: rgba(197, 160, 89, 0.05); border-radius: 12px; border: 1px solid rgba(197, 160, 89, 0.2); line-height: 1.6; font-size: 16px; min-height: 80px; }
@@ -173,9 +173,18 @@
                 <div id="resSummary"></div>
             </div>
 
+            <div style="margin-top: 15px; text-align: center; padding: 10px; border-right: 4px solid var(--primary); background: #f9f9f9;">
+                <p style="margin: 0; color: var(--primary); font-weight: bold; font-size: 17px;">
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i> تم استلام المرفقات والمستندات بنجاح.
+                </p>
+                <p style="margin: 5px 0 0 0; color: #555; font-size: 15px;">
+                    سيتم الرد عليكم في طلبكم في أقرب وقت، يرجى متابعة حالة الطلب من صفحة المتابعة.
+                </p>
+            </div>
+
             <div style="margin-top:20px; padding:15px; border:2px solid var(--gold); border-radius:15px; text-align:center; background: rgba(197, 160, 89, 0.03);">
                 <p style="margin:0; font-weight:900; color:var(--primary); font-size:16px;">
-                    <i class="fas fa-exclamation-circle" style="color:var(--gold);"></i> 
+                    <i class="fas fa-exclamation-circle" style="color:var(--gold);"></i>&nbsp;
                     يرجى الاحتفاظ بهذا الإيصال ومتابعة حالة الطلب بالرقم القومي.
                 </p>
             </div>
@@ -251,11 +260,9 @@
             const img = new Image();
             img.src = event.target.result;
             img.onload = function() {
-                // --- مرحلة ضغط وتصغير الصورة لزيادة السرعة ---
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 
-                // العرض الأقصى 1600 بكسل يضمن وضوح فائق للطباعة مع حجم ملف صغير
                 const MAX_WIDTH = 1600;
                 let width = img.width;
                 let height = img.height;
@@ -269,7 +276,6 @@
                 canvas.height = height;
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // تحويل لـ JPEG بجودة عالية 90% (توازن مثالي بين السرعة والوضوح)
                 const compressedBase64 = canvas.toDataURL('image/jpeg', 0.9);
 
                 const payload = {
@@ -317,4 +323,3 @@
 </script>
 </body>
 </html>
-
